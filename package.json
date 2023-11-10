@@ -1,0 +1,18 @@
+{
+  "name": "phantomake",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/ejs": "^3.1.5",
+    "arg": "^5.0.2",
+    "ejs": "^3.1.9",
+    "front-matter": "^4.0.2",
+    "micromark": "^4.0.0"
+  }
+}
