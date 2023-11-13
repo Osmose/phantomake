@@ -1,8 +1,12 @@
 {
   "name": "phantomake",
-  "module": "index.ts",
+  "module": "src/index.ts",
   "type": "module",
+  "scripts": {
+    "cli": "bun run src/cli.ts"
+  },
   "devDependencies": {
+    "@types/http-server": "^0.12.4",
     "bun-types": "latest"
   },
   "peerDependencies": {
@@ -10,9 +14,11 @@
   },
   "dependencies": {
     "@types/ejs": "^3.1.5",
-    "arg": "^5.0.2",
+    "chokidar": "^3.5.3",
+    "commander": "^11.1.0",
     "ejs": "^3.1.9",
     "front-matter": "^4.0.2",
+    "http-server": "^14.1.1",
     "micromark": "^4.0.0"
   }
 }

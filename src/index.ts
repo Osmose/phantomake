@@ -4,7 +4,6 @@ import * as os from 'node:os';
 import { BunFile } from 'bun';
 import ejs from 'ejs';
 import frontMatter from 'front-matter';
-import arg from 'arg';
 import { micromark } from 'micromark';
 
 /** Recursively walk a directory tree and return the path of every individual file found. */
@@ -88,17 +87,7 @@ class InputFile {
   }
 }
 
-async function main() {
-  // CLI args
-  const args = arg({});
-  if (!args._[0]) {
-    throw new Error('Missing argument input_directory');
-  } else if (!args._[1]) {
-    throw new Error('Missing argument output_directory');
-  }
-  const inputDirectory = nodePath.resolve(args._[0]);
-  const outputDirectory = nodePath.resolve(args._[1]);
-
+export default async function phantomake(inputDirectory: string, outputDirectory: string) {
   // Find input files and prepare for processing
   const inputFiles = (await walk(inputDirectory)).map((inputPath) => new InputFile(inputDirectory, inputPath));
   const templates = await Templates.fromInputFiles(inputFiles);
@@ -137,5 +126,3 @@ async function main() {
   // Write output
   await fs.cp(tempOutputDirectory, outputDirectory, { recursive: true });
 }
-
-await main();
