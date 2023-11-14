@@ -1,10 +1,11 @@
 import * as nodePath from 'node:path';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
-import { BunFile } from 'bun';
 import ejs from 'ejs';
 import frontMatter from 'front-matter';
 import { micromark } from 'micromark';
+import { FrontMatterAttributes, InputFile } from './base';
+import { textFileProcessors } from './processors';
 
 /** Recursively walk a directory tree and return the path of every individual file found. */
 async function walk(directory: string): Promise<string[]> {
@@ -32,7 +33,7 @@ class Templates {
     if (!template) {
       if (!templateName) {
         throw new Error(
-          'Markdown files without an explicit template require a default HTML template at .templates/default.html'
+          'Markdown files without an explicit template require a default HTML template at .templates/default.ejs'
         );
       } else {
         throw new Error(`No template found under .templates named ${templateName}.`);
@@ -58,35 +59,6 @@ class Templates {
   }
 }
 
-interface FrontMatterAttributes {
-  template?: string;
-  [key: string]: any;
-}
-
-class InputFile {
-  public readonly relativePath: string;
-  public readonly parsedRelativePath: nodePath.ParsedPath;
-  public readonly file: BunFile;
-
-  constructor(private inputRoot: string, public readonly path: string) {
-    this.relativePath = nodePath.relative(inputRoot, path);
-    this.parsedRelativePath = nodePath.parse(this.relativePath);
-    this.file = Bun.file(path);
-  }
-
-  get isTemplate() {
-    return this.relativePath.startsWith('.templates');
-  }
-
-  get isWithinDotDirectory() {
-    return this.relativePath.split(nodePath.sep).some((directory) => directory.startsWith('.'));
-  }
-
-  outputPath(outputDir: string, extension: string) {
-    return nodePath.join(outputDir, this.parsedRelativePath.dir, `${this.parsedRelativePath.name}${extension}`);
-  }
-}
-
 export default async function phantomake(inputDirectory: string, outputDirectory: string) {
   // Find input files and prepare for processing
   const inputFiles = (await walk(inputDirectory)).map((inputPath) => new InputFile(inputDirectory, inputPath));
@@ -102,23 +74,32 @@ export default async function phantomake(inputDirectory: string, outputDirectory
 
     console.log(`Processing ${inputFile.relativePath}...`);
 
-    if (inputFile.parsedRelativePath.ext === '.md') {
-      // Markdown compiled and rendered with an EJS template
-      const { attributes, body } = frontMatter<FrontMatterAttributes>(await inputFile.file.text());
-      const content = await micromark(body, { allowDangerousHtml: true });
+    if (inputFile.isText) {
+      // Text files may optionally have front matter
+      const frontMatterResult = frontMatter<FrontMatterAttributes>(await inputFile.file.text());
+      const { attributes, body } = frontMatterResult;
 
-      const output = templates.apply(attributes.template, { page: { attributes, content } });
-      await Bun.write(inputFile.outputPath(tempOutputDirectory, '.html'), output);
-    } else if (['.html', '.ejs'].includes(inputFile.parsedRelativePath.ext)) {
-      // EJS template (or bare HTML)
-      const { attributes, body } = frontMatter<FrontMatterAttributes>(await inputFile.file.text());
-      const content = ejs.render(body, { page: { attributes } }, { filename: inputFile.path });
+      let output = body;
+      let outputPath = nodePath.join(tempOutputDirectory, inputFile.relativePath);
 
-      const output = templates.apply(attributes.template, { page: { attributes, content } });
-      await Bun.write(inputFile.outputPath(tempOutputDirectory, '.html'), output);
+      // Apply the matching processor if one was found
+      const processor = textFileProcessors.find((p) => p.match(inputFile));
+      if (processor) {
+        [outputPath, output] = await processor.process(inputFile, frontMatterResult, tempOutputDirectory);
+      }
+
+      // If a template was defined in the frontmatter, apply the processed content to it
+      if (attributes.template) {
+        output = templates.apply(attributes.template, { page: { attributes, content: output } });
+      }
+
+      // Write the final output
+      await fs.mkdir(nodePath.dirname(outputPath), { recursive: true });
+      await Bun.write(outputPath, output);
     } else {
-      // Everything else is just copied over
+      // Non-text files are copied
       const outputPath = nodePath.join(tempOutputDirectory, inputFile.relativePath);
+      await fs.mkdir(nodePath.dirname(outputPath), { recursive: true });
       await Bun.write(outputPath, inputFile.file);
     }
   }
