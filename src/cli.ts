@@ -1,7 +1,6 @@
 import * as nodePath from 'node:path';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
-import { watch } from 'node:fs';
 import { program } from 'commander';
 import { createServer } from 'http-server';
 import chokidar from 'chokidar';

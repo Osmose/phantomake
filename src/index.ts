@@ -3,9 +3,9 @@ import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import ejs from 'ejs';
 import frontMatter from 'front-matter';
-import { micromark } from 'micromark';
 import { FrontMatterAttributes, InputFile } from './base';
-import { textFileProcessors } from './processors';
+import { textFileProcessors } from './processing';
+import { FileContext, GlobalContext } from './context';
 
 /** Recursively walk a directory tree and return the path of every individual file found. */
 async function walk(directory: string): Promise<string[]> {
@@ -25,8 +25,13 @@ async function walk(directory: string): Promise<string[]> {
   return (await walkedDirectoryPromises).flat();
 }
 
+interface Template {
+  render: ejs.TemplateFunction;
+  context: FileContext;
+}
+
 class Templates {
-  constructor(private readonly templates: { [name: string]: ejs.TemplateFunction }) {}
+  constructor(private readonly templates: { [name: string]: Template }) {}
 
   apply(templateName: string | null | undefined, data?: ejs.Data | undefined) {
     const template = this.templates[templateName ?? 'default'];
@@ -40,29 +45,71 @@ class Templates {
       }
     }
 
-    return template(data);
+    return template.render({ ...data, ctx: template.context });
   }
 
-  static async fromInputFiles(inputFiles: InputFile[]) {
-    const templates: { [name: string]: ejs.TemplateFunction } = {};
+  static async fromInputFiles(globalContext: GlobalContext, inputFiles: InputFile[]) {
+    const templates: { [name: string]: Template } = {};
     for (const inputFile of inputFiles) {
       if (!inputFile.isTemplate) {
         continue;
       }
 
-      templates[inputFile.parsedRelativePath.name] = ejs.compile(await inputFile.file.text(), {
-        filename: inputFile.path,
-      });
+      templates[inputFile.parsedRelativePath.name] = {
+        render: ejs.compile(await inputFile.file.text(), {
+          filename: inputFile.path,
+        }),
+        context: globalContext.fileContext(inputFile),
+      };
     }
 
     return new Templates(templates);
   }
 }
 
+interface Output {
+  content: string;
+  attributes: FrontMatterAttributes;
+  path: string;
+}
+
+async function renderOutput(
+  inputFile: InputFile,
+  outputDirectory: string,
+  globalContext: GlobalContext,
+  templates: Templates
+): Promise<Output> {
+  const output = {
+    content: inputFile.body ?? '',
+    attributes: inputFile.attributes,
+    path: nodePath.join(outputDirectory, inputFile.relativePath),
+  };
+  const context = globalContext.fileContext(inputFile);
+
+  // Apply the matching processor if one was found
+  if (inputFile.processor) {
+    output.path = nodePath.join(outputDirectory, inputFile.processor.outputPath(inputFile));
+    output.content = await inputFile.processor.process(inputFile, context);
+  }
+
+  // If a template was defined in the frontmatter, apply the processed content to it
+  const attributes = inputFile.attributes;
+  if (attributes.template) {
+    output.content = templates.apply(attributes.template, { ctx: context, output });
+  }
+
+  return output;
+}
+
 export default async function phantomake(inputDirectory: string, outputDirectory: string) {
   // Find input files and prepare for processing
-  const inputFiles = (await walk(inputDirectory)).map((inputPath) => new InputFile(inputDirectory, inputPath));
-  const templates = await Templates.fromInputFiles(inputFiles);
+  const inputPaths = await walk(inputDirectory);
+  const inputFiles: InputFile[] = [];
+  for (const path of inputPaths) {
+    inputFiles.push(await InputFile.fromPath(inputDirectory, path));
+  }
+  const globalContext = new GlobalContext(inputFiles);
+  const templates = await Templates.fromInputFiles(globalContext, inputFiles);
 
   // Process input files into output
   const tempOutputDirectory = await fs.mkdtemp(nodePath.join(os.tmpdir(), 'phantomake-'));
@@ -75,27 +122,25 @@ export default async function phantomake(inputDirectory: string, outputDirectory
     console.log(`Processing ${inputFile.relativePath}...`);
 
     if (inputFile.isText) {
-      // Text files may optionally have front matter
-      const frontMatterResult = frontMatter<FrontMatterAttributes>(await inputFile.file.text());
-      const { attributes, body } = frontMatterResult;
+      const outputs = [await renderOutput(inputFile, tempOutputDirectory, globalContext, templates)];
 
-      let output = body;
-      let outputPath = nodePath.join(tempOutputDirectory, inputFile.relativePath);
-
-      // Apply the matching processor if one was found
-      const processor = textFileProcessors.find((p) => p.match(inputFile));
-      if (processor) {
-        [outputPath, output] = await processor.process(inputFile, frontMatterResult, tempOutputDirectory);
+      // If a paginator was created, we have to output multiple files
+      const paginator = globalContext.paginators[inputFile.path];
+      if (paginator) {
+        for (const page of paginator.pages) {
+          paginator.currentPage = page.number;
+          const output = await renderOutput(inputFile, tempOutputDirectory, globalContext, templates);
+          output.path = nodePath.join(tempOutputDirectory, page.outputPath);
+          outputs.push(output);
+        }
       }
 
-      // If a template was defined in the frontmatter, apply the processed content to it
-      if (attributes.template) {
-        output = templates.apply(attributes.template, { page: { attributes, content: output } });
+      // Write the final outputs
+      for (const output of outputs) {
+        console.log(`Writing output to ${output.path}...`);
+        await fs.mkdir(nodePath.dirname(output.path), { recursive: true });
+        await Bun.write(output.path, output.content);
       }
-
-      // Write the final output
-      await fs.mkdir(nodePath.dirname(outputPath), { recursive: true });
-      await Bun.write(outputPath, output);
     } else {
       // Non-text files are copied
       const outputPath = nodePath.join(tempOutputDirectory, inputFile.relativePath);

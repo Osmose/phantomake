@@ -1,0 +1,20 @@
+---
+template: default
+---
+<h1>Blog Posts</h1>
+
+<% const paginator = ctx.paginate(ctx.getFiles('./*.md'), {itemsPerPage: 2}) %>
+<ol>
+  <% for (const file of paginator.items) { %>
+    <li><a href="<%- file.url %>"><%- file.attributes.name %></a></li>
+  <% } %>
+</ol>
+
+<div>
+  <h2>Pages</h2>
+  <p>
+    <% for (const page of paginator.pages) { %>
+      <span><a href="<%- page.url %>"><%- page.number %></a></span>
+    <% } %>
+  </p>
+</div>
