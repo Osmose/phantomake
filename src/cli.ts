@@ -1,9 +1,13 @@
 import * as nodePath from 'node:path';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
+import * as http from 'node:http';
 import { program } from 'commander';
-import { createServer } from 'http-server';
+import finalhandler from 'finalhandler';
+import serveStatic from 'serve-static';
 import chokidar from 'chokidar';
+import send from 'send';
+
 import phantomake from './index';
 
 program.name('phantomake').version('0.1');
@@ -13,7 +17,7 @@ program
   .argument('<inputDirectory>', 'Directory containing source files')
   .argument('<outputDirectory>', "Directory to write generate site to. Will be created if it doesn't exist.")
   .action((inputDirectory: string, outputDirectory: string) => {
-    phantomake(nodePath.resolve(inputDirectory), nodePath.resolve(outputDirectory));
+    phantomake(nodePath.resolve(inputDirectory), nodePath.resolve(outputDirectory), { logging: true });
   });
 
 program
@@ -26,21 +30,43 @@ program
     console.log(`Building...`);
     await phantomake(watchDirectory, tempOutputDirectory);
 
-    const watcher = chokidar.watch(watchDirectory, {
-      followSymlinks: false,
-      depth: 30,
-    });
+    // Only run one make call at a time; if a change happens during a run, finish the current one and schedule
+    // a re-run when it finishes.
+    let makePromise: Promise<void> | null = null;
+    let remakeAfterFinish = false;
+    function runPhantomake() {
+      if (makePromise) {
+        remakeAfterFinish = true;
+      } else {
+        makePromise = phantomake(watchDirectory, tempOutputDirectory).then(() => {
+          makePromise = null;
+          if (remakeAfterFinish) {
+            remakeAfterFinish = false;
+            runPhantomake();
+          }
+        });
+      }
+    }
+
+    const watcher = chokidar.watch(watchDirectory);
     watcher.on('ready', () => {
-      watcher.on('all', (eventName, path) => {
-        console.log(`Detected change in ${path}, rebuilding...`);
-        phantomake(watchDirectory, tempOutputDirectory);
+      watcher.on('all', async (event, filename) => {
+        console.log(`Detected ${event} in ${filename}, rebuilding...`);
+        runPhantomake();
       });
     });
 
-    const server = createServer({
-      root: tempOutputDirectory,
-      cache: -1,
-      showDir: false,
+    const serve = serveStatic(tempOutputDirectory);
+    const server = http.createServer((req, res) => {
+      const done = finalhandler(req as http.IncomingMessage, res as http.ServerResponse, {});
+      serve(req as http.IncomingMessage, res as http.ServerResponse, (err) => {
+        if (!err) {
+          res.statusCode = 404;
+          send(req, nodePath.join(tempOutputDirectory, '404.html')).pipe(res);
+        } else {
+          done(err);
+        }
+      });
     });
     server.listen(8000, '0.0.0.0');
     console.log(`Now serving project at http://localhost:8000`);
@@ -48,7 +74,7 @@ program
     process.on('SIGINT', async () => {
       // close watcher when Ctrl-C is pressed
       console.log('Closing watcher...');
-      await watcher.close();
+      watcher.close();
       server.close(() => process.exit(0));
     });
   });

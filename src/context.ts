@@ -1,11 +1,13 @@
 import * as nodePath from 'node:path';
 import type { InputFile } from './base';
+import dayjs from 'dayjs';
 import { globSync } from 'glob';
+import renderMarkdown from './markdown';
 
 /** Stores data shared by all FileContexts and creates them for each individual file. */
 export class GlobalContext {
   public readonly inputFileMap: Record<string, InputFile> = {};
-  public readonly paginators: Record<string, Paginator> = {};
+  public readonly paginators: Record<string, Paginator<any>> = {};
   private fileContexts: Record<string, FileContext> = {};
 
   constructor(inputFiles: InputFile[]) {
@@ -52,6 +54,14 @@ export class FileContext {
     }
 
     return paginator;
+  }
+
+  renderMarkdown(content: string) {
+    return renderMarkdown(content);
+  }
+
+  formatDate(dateString: string, template: string) {
+    return dayjs(dateString).format(template);
   }
 }
 

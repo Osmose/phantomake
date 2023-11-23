@@ -16,6 +16,7 @@ export type FrontMatterResult = GeneralFrontMatterResult<FrontMatterAttributes>;
 
 /** Object that renders a text file of some kind into generated output. */
 export interface TextFileProcessor {
+  defaultAttributes?: Partial<FrontMatterAttributes>;
   match(inputFile: InputFile): boolean;
   outputPath(inputFile: InputFile): string;
   process(inputFile: InputFile, context: FileContext): Promise<string>;
@@ -44,6 +45,9 @@ export class InputFile {
 
     if (this.isText) {
       this.processor = textFileProcessors.find((p) => p.match(this)) ?? null;
+      if (this.processor) {
+        this.attributes = { ...this.processor.defaultAttributes, ...this.attributes };
+      }
     }
   }
 

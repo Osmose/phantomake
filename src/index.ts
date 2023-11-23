@@ -73,22 +73,17 @@ interface Output {
   path: string;
 }
 
-async function renderOutput(
-  inputFile: InputFile,
-  outputDirectory: string,
-  globalContext: GlobalContext,
-  templates: Templates
-): Promise<Output> {
+async function renderOutput(inputFile: InputFile, globalContext: GlobalContext, templates: Templates): Promise<Output> {
   const output = {
     content: inputFile.body ?? '',
     attributes: inputFile.attributes,
-    path: nodePath.join(outputDirectory, inputFile.relativePath),
+    path: inputFile.relativePath,
   };
   const context = globalContext.fileContext(inputFile);
 
   // Apply the matching processor if one was found
   if (inputFile.processor) {
-    output.path = nodePath.join(outputDirectory, inputFile.processor.outputPath(inputFile));
+    output.path = inputFile.processor.outputPath(inputFile);
     output.content = await inputFile.processor.process(inputFile, context);
   }
 
@@ -101,7 +96,15 @@ async function renderOutput(
   return output;
 }
 
-export default async function phantomake(inputDirectory: string, outputDirectory: string) {
+export interface PhantomakeOptions {
+  logging?: boolean;
+}
+
+export default async function phantomake(
+  inputDirectory: string,
+  outputDirectory: string,
+  options: PhantomakeOptions = {}
+) {
   // Find input files and prepare for processing
   const inputPaths = await walk(inputDirectory);
   const inputFiles: InputFile[] = [];
@@ -119,27 +122,32 @@ export default async function phantomake(inputDirectory: string, outputDirectory
       continue;
     }
 
-    console.log(`Processing ${inputFile.relativePath}...`);
+    if (options.logging) {
+      console.log(`Processing ${inputFile.relativePath}...`);
+    }
 
     if (inputFile.isText) {
-      const outputs = [await renderOutput(inputFile, tempOutputDirectory, globalContext, templates)];
+      const outputs = [await renderOutput(inputFile, globalContext, templates)];
 
       // If a paginator was created, we have to output multiple files
       const paginator = globalContext.paginators[inputFile.path];
       if (paginator) {
         for (const page of paginator.pages) {
           paginator.currentPage = page.number;
-          const output = await renderOutput(inputFile, tempOutputDirectory, globalContext, templates);
-          output.path = nodePath.join(tempOutputDirectory, page.outputPath);
+          const output = await renderOutput(inputFile, globalContext, templates);
+          output.path = page.outputPath;
           outputs.push(output);
         }
       }
 
       // Write the final outputs
       for (const output of outputs) {
-        console.log(`Writing output to ${output.path}...`);
-        await fs.mkdir(nodePath.dirname(output.path), { recursive: true });
-        await Bun.write(output.path, output.content);
+        if (options.logging) {
+          console.log(`Writing output to ${output.path}...`);
+        }
+        const fullOutputPath = nodePath.join(tempOutputDirectory, output.path);
+        await fs.mkdir(nodePath.dirname(fullOutputPath), { recursive: true });
+        await Bun.write(fullOutputPath, output.content);
       }
     } else {
       // Non-text files are copied

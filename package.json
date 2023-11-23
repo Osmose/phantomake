@@ -6,7 +6,9 @@
     "cli": "bun run src/cli.ts"
   },
   "devDependencies": {
-    "@types/http-server": "^0.12.4",
+    "@types/finalhandler": "^1.2.3",
+    "@types/send": "^0.17.4",
+    "@types/serve-static": "^1.15.5",
     "bun-types": "latest"
   },
   "peerDependencies": {
@@ -16,11 +18,18 @@
     "@types/ejs": "^3.1.5",
     "chokidar": "^3.5.3",
     "commander": "^11.1.0",
+    "dayjs": "^1.11.10",
     "ejs": "^3.1.9",
+    "finalhandler": "^1.2.0",
     "front-matter": "^4.0.2",
     "glob": "^10.3.10",
-    "http-server": "^14.1.1",
     "istextorbinary": "^8.1.0",
-    "micromark": "^4.0.0"
+    "rehype-highlight": "^7.0.0",
+    "rehype-stringify": "^10.0.0",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.0.0",
+    "send": "^0.18.0",
+    "serve-static": "^1.15.0",
+    "unified": "^11.0.4"
   }
 }

@@ -1,10 +1,14 @@
 import * as nodePath from 'node:path';
 import ejs from 'ejs';
-import { micromark } from 'micromark';
 import type { InputFile, TextFileProcessor } from './base';
 import { FileContext } from './context';
+import renderMarkdown from './markdown';
 
 const MarkdownProcessor: TextFileProcessor = {
+  defaultAttributes: {
+    template: 'default',
+  },
+
   match(inputFile: InputFile) {
     return inputFile.parsedRelativePath.ext === '.md';
   },
@@ -18,7 +22,7 @@ const MarkdownProcessor: TextFileProcessor = {
     if (inputFile.body === null) {
       throw new Error(`Input file ${inputFile.relativePath} is missing it's body.`);
     }
-    return micromark(inputFile.body, { allowDangerousHtml: true });
+    return renderMarkdown(inputFile.body);
   },
 };
 
