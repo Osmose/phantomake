@@ -12,6 +12,11 @@ import consola from 'consola';
 
 import phantomake, { PhantomakeOptions } from './index';
 
+interface CommonOptions {
+  baseUrl?: string;
+  verbose: boolean;
+}
+
 program
   .name('phantomake')
   .version('0.1')
@@ -29,7 +34,7 @@ async function makePhantomakeOptions(
   inputDirectory: string | null,
   options?: Partial<PhantomakeOptions>
 ): Promise<PhantomakeOptions> {
-  const programOptions = program.opts();
+  const programOptions: CommonOptions = program.opts();
 
   let projectConfig = {};
   if (inputDirectory) {
@@ -59,16 +64,23 @@ program
     );
   });
 
+interface WatchOptions extends CommonOptions {
+  port: string;
+  host: string;
+}
+
 program
   .command('watch')
   .description('Build and watch a directory for changes, and host the output on a local development server')
   .argument('<inputDirectory>', 'Directory containing source files')
-  .action(async (inputDirectory: string) => {
+  .option('-p, --port <port>', 'Port to listen on', '8000')
+  .option('-h, --host <host>', 'Hostname to listen on', 'localhost')
+  .action(async (inputDirectory: string, options: WatchOptions) => {
     const watchDirectory = nodePath.resolve(inputDirectory);
     const tempOutputDirectory = await fs.mkdtemp(nodePath.join(os.tmpdir(), 'phantomake-'));
     const phantomakeOptions = await makePhantomakeOptions(inputDirectory, {
       logging: true,
-      baseUrl: 'http://localhost:8000',
+      baseUrl: `http://${options.host}:${options.port}`,
     });
 
     consola.start(`Performing initial build of ${watchDirectory}`);
@@ -127,8 +139,8 @@ program
         }
       });
     });
-    server.listen(8000, '0.0.0.0');
-    consola.start(`Now serving project at http://localhost:8000`);
+    server.listen(Number.parseInt(options.port), options.host);
+    consola.start(`Now serving project at http://${options.host}:${options.port}`);
 
     process.on('SIGINT', async () => {
       // close watcher when Ctrl-C is pressed
