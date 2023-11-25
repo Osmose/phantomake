@@ -2,9 +2,8 @@ import * as nodePath from 'node:path';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import ejs from 'ejs';
-import frontMatter from 'front-matter';
-import { FrontMatterAttributes, InputFile } from './base';
-import { textFileProcessors } from './processing';
+import { consola } from 'consola';
+import { InputFile } from './base';
 import { FileContext, GlobalContext } from './context';
 
 /** Recursively walk a directory tree and return the path of every individual file found. */
@@ -108,6 +107,8 @@ export default async function phantomake(
   outputDirectory: string,
   options: PhantomakeOptions = {}
 ) {
+  const logger = options.logging ? consola : null;
+
   // Find input files and prepare for processing
   const inputPaths = await walk(inputDirectory);
   const inputFiles: InputFile[] = [];
@@ -125,10 +126,6 @@ export default async function phantomake(
       continue;
     }
 
-    if (options.logging) {
-      console.log(`Processing ${inputFile.relativePath}...`);
-    }
-
     if (inputFile.isText) {
       const outputs = [await renderOutput(inputFile, globalContext, templates)];
 
@@ -143,17 +140,24 @@ export default async function phantomake(
         }
       }
 
+      if (outputs.length === 1) {
+        logger?.verbose(`${inputFile.relativePath} ──> ${outputs[0].path}`);
+      } else {
+        logger?.verbose(inputFile.relativePath);
+        for (const output of outputs) {
+          logger?.verbose(` └─> ${output.path}`);
+        }
+      }
+
       // Write the final outputs
       for (const output of outputs) {
-        if (options.logging) {
-          console.log(`Writing output to ${output.path}...`);
-        }
         const fullOutputPath = nodePath.join(tempOutputDirectory, output.path);
         await fs.mkdir(nodePath.dirname(fullOutputPath), { recursive: true });
         await Bun.write(fullOutputPath, output.content);
       }
     } else {
       // Non-text files are copied
+      logger?.verbose(`${inputFile.relativePath} ──> ${inputFile.relativePath}`);
       const outputPath = nodePath.join(tempOutputDirectory, inputFile.relativePath);
       await fs.mkdir(nodePath.dirname(outputPath), { recursive: true });
       await Bun.write(outputPath, inputFile.file);

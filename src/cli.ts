@@ -8,10 +8,22 @@ import serveStatic from 'serve-static';
 import chokidar from 'chokidar';
 import send from 'send';
 import toml from 'toml';
+import consola from 'consola';
 
 import phantomake, { PhantomakeOptions } from './index';
 
-program.name('phantomake').version('0.1').option('--base-url <url>', 'Base URL to use for absolute URLs');
+program
+  .name('phantomake')
+  .version('0.1')
+  .description('A file-focused static site generator')
+  .option('--base-url <url>', 'Base URL to use for absolute URLs')
+  .option('-v, --verbose', 'Enable verbose logging', false)
+  .hook('preAction', (thisCommand) => {
+    consola.level = 4; // Info
+    if (thisCommand.opts().verbose) {
+      consola.level = Number.POSITIVE_INFINITY;
+    }
+  });
 
 async function makePhantomakeOptions(
   inputDirectory: string | null,
@@ -36,8 +48,9 @@ async function makePhantomakeOptions(
 
 program
   .command('build', { isDefault: true })
+  .description('Build a directory and save the output')
   .argument('<inputDirectory>', 'Directory containing source files')
-  .argument('<outputDirectory>', "Directory to write generate site to. Will be created if it doesn't exist.")
+  .argument('<outputDirectory>', "Directory to write generated site to. Will be created if it doesn't exist.")
   .action(async (inputDirectory: string, outputDirectory: string) => {
     phantomake(
       nodePath.resolve(inputDirectory),
@@ -48,19 +61,22 @@ program
 
 program
   .command('watch')
+  .description('Build and watch a directory for changes, and host the output on a local development server')
   .argument('<inputDirectory>', 'Directory containing source files')
   .action(async (inputDirectory: string) => {
     const watchDirectory = nodePath.resolve(inputDirectory);
     const tempOutputDirectory = await fs.mkdtemp(nodePath.join(os.tmpdir(), 'phantomake-'));
     const phantomakeOptions = await makePhantomakeOptions(inputDirectory, {
+      logging: true,
       baseUrl: 'http://localhost:8000',
     });
 
-    console.log(`Building...`);
+    consola.start(`Performing initial build of ${watchDirectory}`);
     try {
       await phantomake(watchDirectory, tempOutputDirectory, phantomakeOptions);
+      consola.success('Build succeeded');
     } catch (err) {
-      console.error(err?.toString());
+      consola.error(err?.toString());
     }
 
     // Only run one make call at a time; if a change happens during a run, finish the current one and schedule
@@ -71,20 +87,30 @@ program
       if (makePromise) {
         remakeAfterFinish = true;
       } else {
-        makePromise = phantomake(watchDirectory, tempOutputDirectory, phantomakeOptions).finally(() => {
-          makePromise = null;
-          if (remakeAfterFinish) {
-            remakeAfterFinish = false;
-            runPhantomake();
-          }
-        });
+        makePromise = phantomake(watchDirectory, tempOutputDirectory, phantomakeOptions)
+          .then(
+            () => {
+              consola.success('Build succeeded');
+            },
+            (err) => {
+              consola.error(err?.toString());
+            }
+          )
+          .finally(() => {
+            makePromise = null;
+            if (remakeAfterFinish) {
+              remakeAfterFinish = false;
+              runPhantomake();
+            }
+          });
       }
     }
 
     const watcher = chokidar.watch(watchDirectory);
     watcher.on('ready', () => {
       watcher.on('all', async (event, filename) => {
-        console.log(`Detected ${event} in ${filename}, rebuilding...`);
+        const relativeFilename = nodePath.relative(watchDirectory, filename);
+        consola.log(`Detected ${event} in ${relativeFilename}, rebuilding`);
         runPhantomake();
       });
     });
@@ -102,11 +128,11 @@ program
       });
     });
     server.listen(8000, '0.0.0.0');
-    console.log(`Now serving project at http://localhost:8000`);
+    consola.start(`Now serving project at http://localhost:8000`);
 
     process.on('SIGINT', async () => {
       // close watcher when Ctrl-C is pressed
-      console.log('Closing watcher...');
+      consola.log('Closing watcher');
       watcher.close();
       server.close(() => process.exit(0));
     });
