@@ -56,7 +56,13 @@ export class InputFile {
   }
 
   get url() {
-    return this.relativeOutputPath.replace(nodePath.sep, '/').replace(/^\./, '');
+    return (
+      '/' +
+      this.relativeOutputPath
+        .replace(nodePath.sep, '/')
+        .replace(/^\./, '')
+        .replace(/index\.html$/, '')
+    );
   }
 
   get isTemplate() {

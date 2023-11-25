@@ -2,7 +2,12 @@ import * as nodePath from 'node:path';
 import type { InputFile } from './base';
 import dayjs from 'dayjs';
 import { globSync } from 'glob';
+import _ from 'lodash';
 import renderMarkdown from './markdown';
+
+interface GlobalContextOptions {
+  baseUrl?: string;
+}
 
 /** Stores data shared by all FileContexts and creates them for each individual file. */
 export class GlobalContext {
@@ -10,7 +15,7 @@ export class GlobalContext {
   public readonly paginators: Record<string, Paginator<any>> = {};
   private fileContexts: Record<string, FileContext> = {};
 
-  constructor(inputFiles: InputFile[]) {
+  constructor(inputFiles: InputFile[], public readonly options: GlobalContextOptions = {}) {
     for (const inputFile of inputFiles) {
       this.inputFileMap[inputFile.path] = inputFile;
     }
@@ -31,25 +36,50 @@ interface PaginatorConfig {
   itemsPerPage: number;
 }
 
+interface GetFilesOptions {
+  sort?: {
+    attribute: string;
+    order?: 'asc' | 'desc';
+    type?: 'string' | 'date';
+  };
+}
+
 /** Data and utility functions used by processors. */
 export class FileContext {
-  constructor(private globalCtx: GlobalContext, public readonly inputFile: InputFile) {}
+  constructor(private globalCtx: GlobalContext, public readonly file: InputFile) {}
 
-  getFiles(pattern: string) {
-    const paths = globSync(pattern, { cwd: nodePath.dirname(this.inputFile.path), absolute: true });
-    return paths.map((path) => this.globalCtx.inputFileMap[path]).filter((file) => file);
+  getFiles(pattern: string, options: GetFilesOptions = {}) {
+    const paths = globSync(pattern, { cwd: nodePath.dirname(this.file.path), absolute: true });
+    let files = paths.map((path) => this.globalCtx.inputFileMap[path]).filter((file) => file);
+
+    if (options.sort) {
+      const sortOptions = options.sort;
+      files = _.sortBy(files, (file) => {
+        const attribute = file.attributes[sortOptions.attribute];
+        if (sortOptions.type === 'date') {
+          return dayjs(attribute);
+        }
+        return attribute;
+      });
+
+      if (sortOptions.order === 'desc') {
+        files.reverse();
+      }
+    }
+
+    return files;
   }
 
   paginate<T>(items: T[], config?: Partial<PaginatorConfig>) {
-    if (this.inputFile.isTemplate) {
+    if (this.file.isTemplate) {
       // TODO: Fix issue with templates associating a paginator with the source file and not the template.
       throw new Error('Cannot paginate in templates');
     }
 
-    const path = this.inputFile.path;
+    const path = this.file.path;
     let paginator = this.globalCtx.paginators[path];
     if (!paginator) {
-      paginator = new Paginator<T>(this.inputFile, items, config);
+      paginator = new Paginator<T>(this.file, items, config);
       this.globalCtx.paginators[path] = paginator;
     }
 
@@ -62,6 +92,18 @@ export class FileContext {
 
   formatDate(dateString: string, template: string) {
     return dayjs(dateString).format(template);
+  }
+
+  absolutify(url: string) {
+    const { baseUrl } = this.globalCtx.options;
+    if (!baseUrl) {
+      throw new Error('Cannot use absolutify without providing a base-url: See the --base-url option for details.');
+    }
+
+    console.log(`ABSOLUTIFYING ${url} against ${baseUrl}${this.file.url}`);
+    const urlObject = new URL(url, `${baseUrl}${this.file.url}`);
+    console.log(`Result: ${urlObject.href}`);
+    return urlObject.href;
   }
 }
 

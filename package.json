@@ -7,6 +7,7 @@
   },
   "devDependencies": {
     "@types/finalhandler": "^1.2.3",
+    "@types/lodash": "^4.14.202",
     "@types/send": "^0.17.4",
     "@types/serve-static": "^1.15.5",
     "bun-types": "latest"
@@ -24,8 +25,11 @@
     "front-matter": "^4.0.2",
     "glob": "^10.3.10",
     "istextorbinary": "^8.1.0",
+    "lodash": "^4.17.21",
     "rehype-highlight": "^7.0.0",
     "rehype-stringify": "^10.0.0",
+    "remark-directive": "^3.0.0",
+    "remark-gfm": "^4.0.0",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.0.0",
     "send": "^0.18.0",

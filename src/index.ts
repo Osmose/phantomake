@@ -69,14 +69,14 @@ class Templates {
 
 interface Output {
   content: string;
-  attributes: FrontMatterAttributes;
+  file: InputFile;
   path: string;
 }
 
 async function renderOutput(inputFile: InputFile, globalContext: GlobalContext, templates: Templates): Promise<Output> {
   const output = {
     content: inputFile.body ?? '',
-    attributes: inputFile.attributes,
+    file: inputFile,
     path: inputFile.relativePath,
   };
   const context = globalContext.fileContext(inputFile);
@@ -98,6 +98,9 @@ async function renderOutput(inputFile: InputFile, globalContext: GlobalContext, 
 
 export interface PhantomakeOptions {
   logging?: boolean;
+
+  /** URL / domain name to be prepended to absolute URLs. */
+  baseUrl?: string;
 }
 
 export default async function phantomake(
@@ -111,7 +114,7 @@ export default async function phantomake(
   for (const path of inputPaths) {
     inputFiles.push(await InputFile.fromPath(inputDirectory, path));
   }
-  const globalContext = new GlobalContext(inputFiles);
+  const globalContext = new GlobalContext(inputFiles, { baseUrl: options.baseUrl });
   const templates = await Templates.fromInputFiles(globalContext, inputFiles);
 
   // Process input files into output

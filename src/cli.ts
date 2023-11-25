@@ -8,16 +8,28 @@ import serveStatic from 'serve-static';
 import chokidar from 'chokidar';
 import send from 'send';
 
-import phantomake from './index';
+import phantomake, { PhantomakeOptions } from './index';
 
-program.name('phantomake').version('0.1');
+program.name('phantomake').version('0.1').option('--base-url <url>', 'Base URL to use for absolute URLs');
+
+function makePhantomakeOptions(options?: Partial<PhantomakeOptions>): PhantomakeOptions {
+  const programOptions = program.opts();
+  return {
+    baseUrl: programOptions.baseUrl,
+    ...options,
+  };
+}
 
 program
   .command('build', { isDefault: true })
   .argument('<inputDirectory>', 'Directory containing source files')
   .argument('<outputDirectory>', "Directory to write generate site to. Will be created if it doesn't exist.")
   .action((inputDirectory: string, outputDirectory: string) => {
-    phantomake(nodePath.resolve(inputDirectory), nodePath.resolve(outputDirectory), { logging: true });
+    phantomake(
+      nodePath.resolve(inputDirectory),
+      nodePath.resolve(outputDirectory),
+      makePhantomakeOptions({ logging: true })
+    );
   });
 
 program
@@ -26,9 +38,16 @@ program
   .action(async (inputDirectory: string) => {
     const watchDirectory = nodePath.resolve(inputDirectory);
     const tempOutputDirectory = await fs.mkdtemp(nodePath.join(os.tmpdir(), 'phantomake-'));
+    const phantomakeOptions = makePhantomakeOptions({
+      baseUrl: 'http://localhost:8000',
+    });
 
     console.log(`Building...`);
-    await phantomake(watchDirectory, tempOutputDirectory);
+    try {
+      await phantomake(watchDirectory, tempOutputDirectory, phantomakeOptions);
+    } catch (err) {
+      console.error(err?.toString());
+    }
 
     // Only run one make call at a time; if a change happens during a run, finish the current one and schedule
     // a re-run when it finishes.
@@ -38,7 +57,7 @@ program
       if (makePromise) {
         remakeAfterFinish = true;
       } else {
-        makePromise = phantomake(watchDirectory, tempOutputDirectory).then(() => {
+        makePromise = phantomake(watchDirectory, tempOutputDirectory, phantomakeOptions).finally(() => {
           makePromise = null;
           if (remakeAfterFinish) {
             remakeAfterFinish = false;
