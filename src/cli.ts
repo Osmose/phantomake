@@ -7,15 +7,29 @@ import finalhandler from 'finalhandler';
 import serveStatic from 'serve-static';
 import chokidar from 'chokidar';
 import send from 'send';
+import toml from 'toml';
 
 import phantomake, { PhantomakeOptions } from './index';
 
 program.name('phantomake').version('0.1').option('--base-url <url>', 'Base URL to use for absolute URLs');
 
-function makePhantomakeOptions(options?: Partial<PhantomakeOptions>): PhantomakeOptions {
+async function makePhantomakeOptions(
+  inputDirectory: string | null,
+  options?: Partial<PhantomakeOptions>
+): Promise<PhantomakeOptions> {
   const programOptions = program.opts();
+
+  let projectConfig = {};
+  if (inputDirectory) {
+    const configText = await Bun.file(nodePath.join(inputDirectory, '.phantomake.toml')).text();
+    if (configText) {
+      projectConfig = toml.parse(configText);
+    }
+  }
+
   return {
     baseUrl: programOptions.baseUrl,
+    ...projectConfig,
     ...options,
   };
 }
@@ -24,11 +38,11 @@ program
   .command('build', { isDefault: true })
   .argument('<inputDirectory>', 'Directory containing source files')
   .argument('<outputDirectory>', "Directory to write generate site to. Will be created if it doesn't exist.")
-  .action((inputDirectory: string, outputDirectory: string) => {
+  .action(async (inputDirectory: string, outputDirectory: string) => {
     phantomake(
       nodePath.resolve(inputDirectory),
       nodePath.resolve(outputDirectory),
-      makePhantomakeOptions({ logging: true })
+      await makePhantomakeOptions(inputDirectory, { logging: true })
     );
   });
 
@@ -38,7 +52,7 @@ program
   .action(async (inputDirectory: string) => {
     const watchDirectory = nodePath.resolve(inputDirectory);
     const tempOutputDirectory = await fs.mkdtemp(nodePath.join(os.tmpdir(), 'phantomake-'));
-    const phantomakeOptions = makePhantomakeOptions({
+    const phantomakeOptions = await makePhantomakeOptions(inputDirectory, {
       baseUrl: 'http://localhost:8000',
     });
 

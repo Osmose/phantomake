@@ -120,8 +120,8 @@ export default async function phantomake(
   // Process input files into output
   const tempOutputDirectory = await fs.mkdtemp(nodePath.join(os.tmpdir(), 'phantomake-'));
   for (const inputFile of inputFiles) {
-    // Dot directories are not processed
-    if (inputFile.isWithinDotDirectory) {
+    // Dot directories / dotfiles are not processed
+    if (inputFile.parsedRelativePath.name.startsWith('.') || inputFile.isWithinDotDirectory) {
       continue;
     }
 

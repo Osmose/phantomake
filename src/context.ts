@@ -100,9 +100,7 @@ export class FileContext {
       throw new Error('Cannot use absolutify without providing a base-url: See the --base-url option for details.');
     }
 
-    console.log(`ABSOLUTIFYING ${url} against ${baseUrl}${this.file.url}`);
     const urlObject = new URL(url, `${baseUrl}${this.file.url}`);
-    console.log(`Result: ${urlObject.href}`);
     return urlObject.href;
   }
 }
