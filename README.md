@@ -1,6 +1,6 @@
-<div style="text-align: center; margin-bottom: 3em">
+<div align="center">
   <a href="github.com/Osmose/phantomake"><img src="phantomake.png"></a>
-  <h1 style="border-bottom: none">Phantomake</h1>
+  <h3>Phantomake</h3>
   <p>A file-focused static site generator.</p>
 </div>
 
