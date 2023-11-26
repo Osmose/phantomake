@@ -8,7 +8,7 @@
 
 Phantomake is a static site generator with specific goals:
 
-- Be distributed as a single, standalone executable
+- Distributed as a single, standalone executable
 - When run on an existing static site, will (in most cases) output the exact same site with no changes
 - Can reuse common code (headers/footers/common HTML) across several pages with templates and includes
 - Can do pagination (e.g. for blog listings)
@@ -63,7 +63,7 @@ We can add the `.ejs` extension to our HTML files and use the `include` function
   <body>
     <!-- EJS templates use <% %> to mark template logic. The dash at the start
          means "output the return value of this function". -->
-    <%- include('header.html') %>
+    <%- include('.header.html') %>
     <h2>Homepage</h2>
     <p>Welcome to Phanto's Ghostlace Site</p>
   </body>
