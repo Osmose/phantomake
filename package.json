@@ -1,20 +1,16 @@
 {
   "name": "phantomake",
+  "description": "A file-focused static site generator",
+  "version": "0.1.0",
+  "license": "ISC",
+
   "module": "src/index.ts",
   "type": "module",
+
   "scripts": {
     "cli": "bun run src/cli.ts"
   },
-  "devDependencies": {
-    "@types/finalhandler": "^1.2.3",
-    "@types/lodash": "^4.14.202",
-    "@types/send": "^0.17.4",
-    "@types/serve-static": "^1.15.5",
-    "bun-types": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
+
   "dependencies": {
     "@types/ejs": "^3.1.5",
     "chokidar": "^3.5.3",
@@ -37,5 +33,15 @@
     "serve-static": "^1.15.0",
     "toml": "^3.0.0",
     "unified": "^11.0.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/finalhandler": "^1.2.3",
+    "@types/lodash": "^4.14.202",
+    "@types/send": "^0.17.4",
+    "@types/serve-static": "^1.15.5",
+    "bun-types": "latest"
   }
 }
