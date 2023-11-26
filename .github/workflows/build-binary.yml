@@ -33,7 +33,21 @@ jobs:
         with:
           name: phantomake-${{ matrix.binary-name }}
           path: phantomake-${{ matrix.binary-name }}
-      - name: Release
+      - name: Upload binary to release
         uses: softprops/action-gh-release@v1
         with:
           files: phantomake-${{ matrix.binary-name }}
+  upload-source:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Make source tarball
+        run: |
+          tar -czvf source.tar.gz ./
+      - name: Upload tarball to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: source.tar.gz
