@@ -1,3 +1,4 @@
+#!/usr/bin/env bun
 import * as nodePath from 'node:path';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
