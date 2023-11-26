@@ -24,11 +24,12 @@ jobs:
       - name: Build phantomake
         run: |
           bun build-cli
+          mv phantomake phantomake-${{ matrix.os }}
       - uses: actions/upload-artifact@v3
         with:
           name: phantomake-${{ matrix.os }}
-          path: phantomake
+          path: phantomake-${{ matrix.os }}
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: phantomake
+          files: phantomake-${{ matrix.os }}
