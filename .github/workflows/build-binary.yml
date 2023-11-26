@@ -9,6 +9,8 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest]
+    permissions:
+      contents: write
     steps:
       - name: Setup bun
         uses: oven-sh/setup-bun@v1
