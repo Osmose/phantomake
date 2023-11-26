@@ -8,7 +8,8 @@
   "type": "module",
 
   "scripts": {
-    "cli": "bun run src/cli.ts"
+    "cli": "bun run src/cli.ts",
+    "build-cli": "rm -rf node_modules/fsevents && bun build src/cli.ts --compile --minify --outfile=phantomake"
   },
 
   "dependencies": {

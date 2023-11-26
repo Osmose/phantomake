@@ -1,0 +1,25 @@
+name: Build phantomake binary
+on: [push]
+jobs:
+  build-binary:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    steps:
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Bun install
+        run: |
+          bun install
+      - name: Build phantomake
+        run: |
+          bun build-cli
+      - uses: actions/upload-artifact@v3
+        with:
+          name: phantomake-${{ matrix.os }}
+          path: phantomake
