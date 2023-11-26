@@ -46,7 +46,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Make source tarball
         run: |
-          tar -czvf source.tar.gz ./
+          git archive --format=tar.gz -o source.tar.gz
       - name: Upload tarball to release
         uses: softprops/action-gh-release@v1
         with:
