@@ -8,7 +8,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        include:
+          - os: macos-latest
+            binary-name: macos
+          - os: ubuntu-latest
+            binary-name: linux
     permissions:
       contents: write
     steps:
@@ -24,12 +28,12 @@ jobs:
       - name: Build phantomake
         run: |
           bun build-cli
-          mv phantomake phantomake-${{ matrix.os }}
+          mv phantomake phantomake-${{ matrix.binary-name }}
       - uses: actions/upload-artifact@v3
         with:
-          name: phantomake-${{ matrix.os }}
-          path: phantomake-${{ matrix.os }}
+          name: phantomake-${{ matrix.binary-name }}
+          path: phantomake-${{ matrix.binary-name }}
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: phantomake-${{ matrix.os }}
+          files: phantomake-${{ matrix.binary-name }}
