@@ -170,3 +170,4 @@ dist
 
 example_dist
 /phantomake
+.DS_store

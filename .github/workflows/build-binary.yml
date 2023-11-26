@@ -1,5 +1,8 @@
 name: Build phantomake binary
-on: [push]
+on:
+  push:
+    tags:
+      - '*'
 jobs:
   build-binary:
     runs-on: ${{ matrix.os }}
@@ -23,3 +26,7 @@ jobs:
         with:
           name: phantomake-${{ matrix.os }}
           path: phantomake
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: phantomake
