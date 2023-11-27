@@ -19,11 +19,8 @@ Phantomake is written in [TypeScript](https://www.typescriptlang.org/) and runs 
 
 Binaries for MacOS and Linux ([Windows support eventually!](https://github.com/oven-sh/bun/issues/43)) are available from the [Releases](https://github.com/Osmose/phantomake/releases) page. Or, use the links below to fetch the latest builds:
 
-- [MacOS](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-macos)
-- [Linux](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-linux)
-
-> [!NOTE]
-> You will probably want to rename the downloaded binaries to `phantomake`.
+- [MacOS](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-macos.tar.gz)
+- [Linux](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-linux.tar.gz)
 
 If you have [Bun](https://bun.sh/) installed, you can also install Phantomake as a global package:
 

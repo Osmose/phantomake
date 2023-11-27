@@ -28,15 +28,15 @@ jobs:
       - name: Build phantomake
         run: |
           bun build-cli
-          mv phantomake phantomake-${{ matrix.binary-name }}
+          tar -zcvf phantomake-${{ matrix.binary-name }}.tar.gz phantomake
       - uses: actions/upload-artifact@v3
         with:
-          name: phantomake-${{ matrix.binary-name }}
-          path: phantomake-${{ matrix.binary-name }}
+          name: phantomake-${{ matrix.binary-name }}.tar.gz
+          path: phantomake-${{ matrix.binary-name }}.tar.gz
       - name: Upload binary to release
         uses: softprops/action-gh-release@v1
         with:
-          files: phantomake-${{ matrix.binary-name }}
+          files: phantomake-${{ matrix.binary-name }}.tar.gz
   upload-source:
     runs-on: ubuntu-latest
     permissions:
