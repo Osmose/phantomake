@@ -1,0 +1,40 @@
+name: Build and deploy docs site
+on:
+  push:
+    branches: ['main']
+  workflow_dispatch: # Allows you to run this workflow manually from the Actions tab
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+jobs:
+  build-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Bun install
+        run: |
+          bun install
+      - name: Build docs
+        run: |
+          bun cli docs docs_output
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: 'docs_output'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
