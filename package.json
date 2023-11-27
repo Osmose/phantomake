@@ -11,7 +11,9 @@
   "type": "module",
   "scripts": {
     "cli": "bun run src/cli.ts",
-    "build-cli": "rm -rf node_modules/fsevents && bun build src/cli.ts --compile --minify --outfile=phantomake"
+    "build-cli": "rm -rf node_modules/fsevents && bun build src/cli.ts --compile --minify --outfile=phantomake",
+    "build-docs": "bun run src/cli.ts docs docs_output",
+    "watch-docs": "bun run src/cli.ts watch docs docs_output"
   },
   "dependencies": {
     "@types/ejs": "^3.1.5",

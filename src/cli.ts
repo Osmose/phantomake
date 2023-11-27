@@ -39,9 +39,9 @@ async function makePhantomakeOptions(
 
   let projectConfig = {};
   if (inputDirectory) {
-    const configText = await Bun.file(nodePath.join(inputDirectory, '.phantomake.toml')).text();
-    if (configText) {
-      projectConfig = toml.parse(configText);
+    const configFile = Bun.file(nodePath.join(inputDirectory, '.phantomake.toml'));
+    if (await configFile.exists()) {
+      projectConfig = toml.parse(await configFile.text());
     }
   }
 
