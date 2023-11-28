@@ -2,6 +2,7 @@
   <a href="github.com/Osmose/phantomake"><img src="phantomake.png"></a>
   <h3>Phantomake</h3>
   <p>A file-focused static site generator.</p>
+  <p><a href="https://www.mkelly.me/phantomake/">Documentation</a> - <a href="https://www.mkelly.me/phantomake/download.html">Download</a> - <a href="https://www.mkelly.me/phantomake/examples/">Examples</a></p>
 </div>
 
 ## About
@@ -44,6 +45,8 @@ Phantomake will transform files that meet one of the following criteria:
 - Any dotfile or dot directory (with a `.` at the start of its name) is not included in the output.
 
 All files that don't match any of these are copied without changes from the source to the output.
+
+See [the full documentation](https://www.mkelly.me/phantomake/features.html) for more information.
 
 ### Example: Shared Header
 
@@ -131,7 +134,7 @@ To set up your development copy:
 After this you can run the Phantomake CLI of your development copy using `bun cli` instead of `phantomake`:
 
 ```sh
-bun cli watch ./example --verbose
+bun cli watch ./docs --verbose
 ```
 
 ## License
