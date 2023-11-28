@@ -3,8 +3,19 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="<%- ctx.absolutify('../favicon.ico') %>"/>
+
+    <meta property="og:title" content="Phantomake <%- output.file.attributes.title %>" />
+    <meta property="og:description" content="A file-focused static site generator." />
+    <meta property="og:image" content="<%- ctx.absolutify('../phantomake_banner.png') %>" />
+    <meta property="og:image:alt" content="Phanto, the construction-hat-wearing ghost mascot of Phantomake." />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:url" content="<%- ctx.absolutify(`../${output.path}`) %>" />
+    <meta property="og:site_name" content="Phantomake" />
+
     <title>Phantomake Docs</title>
+    <link rel="icon" href="<%- ctx.absolutify('../favicon.ico') %>"/>
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
