@@ -155,7 +155,7 @@ code:not(.hljs) {
   margin: .6em 0;
 }
 
-.page-content h3:first-child {
+.page-content h3:first-of-type {
   margin-top: 1em;
 }
 
