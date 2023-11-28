@@ -86,6 +86,11 @@ code:not(.hljs) {
   font-weight: 500;
 }
 
+.topbar-title a {
+  color: var(--white);
+  text-decoration: none;
+}
+
 .topbar-nav {
   flex: 0 0 auto;
   font-size: .8em;
