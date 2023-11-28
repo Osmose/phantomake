@@ -7,6 +7,7 @@ import { unified } from 'unified';
 import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
 import remarkDirective from 'remark-directive';
+import { all } from 'lowlight';
 import type { Root } from 'mdast';
 import type { VFile } from 'vfile';
 import { visit } from 'unist-util-visit';
@@ -46,7 +47,7 @@ export default function renderMarkdown(content: string) {
       .use(remarkDirective)
       // .use(renderEJSPlugin)
       .use(remarkRehype, { allowDangerousHtml: true })
-      .use(rehypeHighlight)
+      .use(rehypeHighlight, { languages: all })
       .use(rehypeStringify, { allowDangerousHtml: true })
       .processSync(content)
   );
