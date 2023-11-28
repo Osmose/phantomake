@@ -1,16 +1,42 @@
 ---
-title: Processing
+title: Features
 ---
 
-This page contains a comprehensive description of how Phantomake processes a source directory into an output directory.
+### Processing
 
-### Copied Files and Hidden Files
+Phantomake transforms a source directory into an output directory by processing each individual file in the source directory and determining if any modifications need to be made before copying it to the output directory. This page describes _how_ files may be transformed during processing.
 
-Any file that doesn't have special processing involved (e.g. images, HTML files with no EJS, etc.) are copied from the source directory to the output directory with no changes.
+<nav class="toc">
+  <span class="toc-title">Contents</span>
+  <ul>
+    <li><a href="#copied-files-and-hidden-files">Copied Files and Hidden Files</a></li>
+    <li><a href="#yaml-frontmatter">YAML Frontmatter</a></li>
+    <li><a href="#templates">Templates</a></li>
+    <li>
+      <a href="#markdown">Markdown</a>
+      <ul class="subtoc">
+        <li><a href="#templates-1">Templates</a></li>
+        <li><a href="#syntax-highlighting">Syntax Highlighting</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#ejs">EJS</a>
+      <ul class="subtoc">
+        <li><a href="#file-context">File Context</a></li>
+        <li><a href="#includes">Includes</a></li>
+        <li><a href="#pagination">Pagination</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+#### Copied Files and Hidden Files
+
+Any file that doesn't have special processing involved (e.g. images, HTML files with no EJS, etc.) is copied from the source directory to the output directory with no changes.
 
 The exception is hidden files, which are _not_ copied to the output at all. Hidden files are files that start with a `.` in their filename, or that are within a directory that starts with a `.`. For example, both `.shared_header.html` and `.includes/shared_header.html` will not be included in the output directory. This is useful for includes and templates that are needed for processing but you do not want to have their own pages on your final generated site.
 
-### YAML Frontmatter
+#### YAML Frontmatter
 
 [YAML Frontmatter](https://jekyllrb.com/docs/front-matter/) is a convention for storing metadata about a file written in [YAML](https://yaml.org/). It looks like this:
 
@@ -29,7 +55,7 @@ author: Phanto
 
 Phantomake uses YAML frontmatter for specifying templates, as well as storing data for use in EJS. Because of this, **any text file with YAML frontmatter at the top will have it parsed and removed from that file's output.** This applies to both processed files (Markdown, EJS) and otherwise unprocessed text files (`*.txt` files, JSON files, etc.).
 
-### Templates
+#### Templates
 
 Templates are files that can be "wrapped" around other files in an easy and reusable way. They're primarily useful for defining the base HTML code for your website that other pages are wrapped in without having to copy-paste the HTML between every page on your site. Templates are not specific to HTML, however—you can have a template that generates JavaScript, JSON, or any other text format.
 
@@ -66,7 +92,7 @@ template: default
 
 Because templates are under the `.templates` dot directory, they are not included in your generated output.
 
-### Markdown
+#### Markdown
 
 Files with an `*.md` extension are processed as [Markdown](https://www.markdownguide.org/) and transformed into HTML. The output file's extension is replaced with `*.html`.
 
@@ -96,13 +122,21 @@ A note[^1]
 
 - [ ] to do
 - [x] done
+
+# Blockquote admonitions
+
+> [!NOTE]
+> Highlights information that users should take into account, even when skimming.
+
+> [!WARNING]
+> Critical content demanding immediate user attention due to potential risks.
 ```
 
-#### Templates
+##### Templates
 
 Markdown files are assumed to use templates since Markdown doesn't generate a complete HTML page. If no template is sepcified, Phantomake defaults to applying the `default` template to all Markdown files.
 
-#### Syntax Highlighting
+##### Syntax Highlighting
 
 Code fences with syntax highlighting are also supported:
 
@@ -124,7 +158,7 @@ Code fences output HTML that uses [highlight.js](https://highlightjs.org/)-compa
 
 The [highlight.js examples preview](https://highlightjs.org/examples) can help you find a theme that matches your site design.
 
-### EJS
+#### EJS
 
 Files with a `*.ejs` extension are processed as [EJS](https://ejs.co/). The output filename has the `.ejs` extension removed—if you want to generate an HTML file with EJS, you would name the file `index.html.ejs` and the output file would be named `index.html`.
 
@@ -144,7 +178,7 @@ You can put a `-` at the start to take a value in JavaScript and print the resul
 <p>The sum of 3852 and 250572 is <%- (3852 + 250572) %>.</p>
 ```
 
-#### File Context
+##### File Context
 
 EJS templates have access to the `ctx` variable, called the "file context", which is a variable containing useful functions and data about the file being rendered.
 
@@ -161,7 +195,7 @@ last_updated: 2017-4-25 08:57:00 -0700
 
 See the [API docs]() for a complete description of the functions available on the file context.
 
-#### Includes
+##### Includes
 
 EJS has an `include` function that pulls the content of another file and embeds them into the output:
 
@@ -181,7 +215,7 @@ EJS has an `include` function that pulls the content of another file and embeds 
 > <%- include('.includes/shared_header.html', { title: ctx.file.attributes.title }) ->
 > ```
 
-#### Pagination
+##### Pagination
 
 Pagination allows you to take a list of files and display them on multiple pages. It's achieved using the `ctx.paginate` and `ctx.getFiles` functions:
 

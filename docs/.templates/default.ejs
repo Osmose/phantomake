@@ -7,7 +7,7 @@
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="<%- ctx.absolutify('../styles.css') %>">
   </head>
   <body>
     <header class="topbar">
@@ -16,11 +16,11 @@
           <span>Phantomake</span>
         </h1>
         <nav class="topbar-nav">
-          <a class="topbar-nav-link <%- output.path === 'index.html' && 'selected' %>" href="<%- ctx.absolutify('../index.html') %>">Overview</a>
+          <a class="topbar-nav-link <%- output.path === 'index.html' && 'selected' %>" href="<%- ctx.absolutify('../') %>">Overview</a>
           <a class="topbar-nav-link <%- output.path === 'download.html' && 'selected' %>" href="<%- ctx.absolutify('../download.html') %>">Download</a>
           <a class="topbar-nav-link <%- output.path === 'usage.html' && 'selected' %>" href="<%- ctx.absolutify('../usage.html') %>">Usage</a>
-          <a class="topbar-nav-link <%- output.path === 'processing.html' && 'selected' %>" href="<%- ctx.absolutify('../processing.html') %>">Processing</a>
-          <a class="topbar-nav-link <%- output.path === 'recipes.html' && 'selected' %>" href="<%- ctx.absolutify('../recipes.html') %>">Recipes</a>
+          <a class="topbar-nav-link <%- output.path === 'features.html' && 'selected' %>" href="<%- ctx.absolutify('../features.html') %>">Features</a>
+          <a class="topbar-nav-link <%- output.path.startsWith('examples') && 'selected' %>" href="<%- ctx.absolutify('../examples/') %>">Examples</a>
           <a class="topbar-nav-link" href="https://github.com/Osmose/phantomake">
             <svg class="github-icon" viewbox="0 0 98 96" xmlns="http://www.w3.org/2000/svg">
               <title>Github</title>
@@ -30,7 +30,7 @@
         </nav>
       </div>
     </header>
-    <main>
+    <main class="page">
       <header class="page-header">
         <h2 class="page-title"><%- output.file.attributes.title %></h2>
       </header>
@@ -38,6 +38,8 @@
         <%- output.content %>
       </div>
     </main>
-
+    <footer class="footer">
+      <p>Site generated with Phantomake. Made by <a href="https://mkelly.me/osmose">Osmose</a>.</p>
+    </footer>
   </body>
 </html>

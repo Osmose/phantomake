@@ -29,6 +29,20 @@ body {
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   line-height: 1.5;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body .topbar {
+  flex: 0 0 auto;
+}
+
+body .page {
+  flex: 1;
+}
+
+body .footer {
+  flex: 0 0 auto;
 }
 
 a {
@@ -41,7 +55,7 @@ a:visited {
 
 code.hljs {
   font-size: .9em;
-  margin: 1.5em 0;
+  margin: 2em 0;
 }
 
 code:not(.hljs) {
@@ -121,13 +135,28 @@ code:not(.hljs) {
   width: var(--content-width);
 }
 
-.hero-image-container {
-  margin: 1em auto;
-  text-align: center;
+.footer {
+  text-align: right;
+  margin: 4em auto 1em;
+  width: var(--content-width);
+  color: var(--color-light-grey);
+}
+
+.footer a {
+  color: var(--color-light-grey);
+}
+
+.overview-phanto {
+  float: right;
+  margin: 1em;
 }
 
 .page-content li {
   margin: .6em 0;
+}
+
+.page-content h3:first-child {
+  margin-top: 1em;
 }
 
 .page-content h3 {
@@ -144,4 +173,87 @@ code:not(.hljs) {
   font-weight: 600;
 }
 
-.page-content
+.page-content h5 {
+  margin-top: 2em;
+  color: var(--color-green);
+  font-size: 1.1em;
+  font-weight: 400;
+}
+
+.toc {
+  padding: 1em;
+  border: 1px solid var(--color-light-grey);
+  background: var(--color-white-grey);
+  display: inline-block;
+  margin: 1em 0 0;
+}
+
+.toc-title {
+  font-weight: 600;
+}
+
+.code-block-with-filename {
+  margin: 2em 0;
+}
+
+.code-block-with-filename .filename {
+  font-family: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
+  color: var(--color-white);
+  background: var(--color-grey);
+  padding: .6em 1em;
+  font-size: 85%;
+  white-space: break-spaces;
+}
+
+.code-block-with-filename pre {
+  margin: 0;
+}
+
+.code-block-with-filename .hljs {
+  margin: 0;
+}
+
+.hero-text {
+  font-size: 2em;
+  text-align: center;
+  margin: 1em 0;
+  font-weight: 600;
+}
+
+.side-by-side {
+  display: flex;
+  flex-direction: row;
+  gap: 2em;
+  background: var(--color-white-grey);
+  padding: 2em;
+}
+
+.side-by-side > * {
+  flex: 1;
+  margin: 0;
+  font-size: 0.9em;
+}
+
+.admonition {
+  background: var(--color-white-grey);
+  border: 1px solid var(--color-grey);
+  padding: 1em;
+  margin: 2em 0;
+}
+
+.admonition-title {
+  font-weight: 600;
+  color: var(--color-grey);
+}
+
+.admonition-title::before {
+  content: 'ℹ️ ';
+}
+
+.admonition *:first-child {
+  margin-top: 0;
+}
+
+.admonition *:last-child {
+  margin-bottom: 0;
+}
