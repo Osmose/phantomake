@@ -32,7 +32,11 @@
             <%- include('navlinks.ejs', { ctx, output }) %>
           </div>
           <details class="topbar-narrow-nav">
-            <summary><span class="menu-icon">☰</span></summary>
+            <summary>
+              <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M3 12H21M3 6H21M3 18H21" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </summary>
             <%- include('navlinks.ejs', { ctx, output }) %>
           </details>
         </nav>
