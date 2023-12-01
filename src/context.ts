@@ -1,4 +1,5 @@
 import * as nodePath from 'node:path';
+import * as fs from 'node:fs';
 import type { InputFile } from './base';
 import dayjs from 'dayjs';
 import { globSync } from 'glob';
@@ -44,7 +45,7 @@ interface GetFilesOptions {
   };
 }
 
-/** Data and utility functions used by processors. */
+/** Contains data about the file currently being rendered, as well as utility functions for EJS. */
 export class FileContext {
   constructor(private globalCtx: GlobalContext, public readonly file: InputFile) {}
 
@@ -102,6 +103,11 @@ export class FileContext {
 
     const urlObject = new URL(url, `${baseUrl}${this.file.url}`);
     return urlObject.href;
+  }
+
+  readJson(path: string) {
+    const file = fs.readFileSync(nodePath.resolve(this.file.path, '..', path), { encoding: 'utf-8' });
+    return JSON.parse(file);
   }
 }
 

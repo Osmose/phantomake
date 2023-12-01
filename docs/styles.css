@@ -1,5 +1,5 @@
 :root {
-  --content-width: 800px;
+  --content-width: 960px;
   --content-side-padding: 16px;
 
   --color-black: #1a1c2c;
@@ -159,29 +159,85 @@ code:not(.hljs) {
   margin: .6em 0;
 }
 
-.page-content h3:first-of-type {
-  margin-top: 1em;
+h3,
+h4,
+h5,
+h6 {
+  margin: 1.4em 0 .4em;
 }
 
-.page-content h3 {
+h3:first-of-type {
+  margin-top: .5em;
+}
+
+h3 {
+  /* margin: 2.5em 0 .5em; */
   margin-top: 2em;
   color: var(--color-green);
-  font-size: 1.6em;
+  font-size: 2.2rem;
   font-weight: 400;
 }
 
-.page-content h4 {
-  margin-top: 2em;
+h4 {
+  /* margin: 2.5em 0 .5em; */
   color: var(--color-green);
-  font-size: 1.1em;
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
+h5 {
+  /* margin: 2em 0 .5em; */
+  color: var(--color-green);
+  font-size: 1.2rem;
   font-weight: 600;
 }
 
-.page-content h5 {
-  margin-top: 2em;
+h6 {
+  /* margin: 2em 0 .5em; */
   color: var(--color-green);
-  font-size: 1.1em;
-  font-weight: 400;
+  font-size: 1rem;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--color-light-grey);
+}
+
+hr + h3,
+hr + h4,
+hr + h5,
+hr + h6 {
+  margin-top: 1em;
+}
+
+h3 > a,
+h4 > a,
+h5 > a,
+h6 > a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h3 > a:visited,
+h4 > a:visited,
+h5 > a:visited,
+h6 > a:visited {
+  color: inherit;
+}
+
+figure {
+  text-align: center;
+  margin: 2em 0;
+}
+
+figure > img {
+  background: var(--color-white-grey);
+  padding: 1em;
+}
+
+figcaption {
+  font-size: .9em;
+  color: var(--color-grey);
 }
 
 .toc {
@@ -307,11 +363,33 @@ code:not(.hljs) {
 }
 
 .topbar-narrow-nav[open] {
-  height: 295px;
+  height: 344px;
 }
 
 .topbar-narrow-nav[open] summary {
   color: var(--color-grey);
+}
+
+.api-container {
+  display: grid;
+  grid-template-columns: 200px repeat(4, 1fr);
+  grid-template-rows: 1fr;
+  grid-column-gap: 2em;
+  grid-row-gap: 0px;
+}
+
+.api-conttainer .api-toc {
+  grid-area: 1 / 1 / 2 / 2;
+}
+
+.api-toc .toc {
+  display: block;
+  position: sticky;
+  top: 2em;
+}
+
+.api-container .api-content {
+  grid-area: 1 / 2 / 2 / 3;
 }
 
 @media only screen and (prefers-reduced-motion) {
@@ -359,5 +437,16 @@ code:not(.hljs) {
 
   .side-by-side {
     flex-direction: column;
+  }
+
+  .api-container {
+    display: block;
+  }
+
+  .api-toc .toc {
+    position: relative;
+    top: 0;
+    margin: 1em 0 0;
+    display: inline-block;
   }
 }

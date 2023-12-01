@@ -193,7 +193,7 @@ last_updated: 2017-4-25 08:57:00 -0700
 </div>
 ```
 
-See the [API docs]() for a complete description of the functions available on the file context.
+See the [API docs](./api.md#the-filecontext-class) for a complete description of the functions available on the file context.
 
 ##### Includes
 
@@ -250,4 +250,4 @@ A single file that calls `ctx.paginate` will generate **multiple** output files 
 > [!NOTE]
 > The first page will actually be output twice—once with the 1 page number and once without. For example, `index.html.ejs` will output the first page at both `index.html` and `1.html`. This lets you be flexible on how you link to a paginated file.
 
-See the [API docs]() for a complete description of the pagination API.
+See the [API docs](./api.md#ctxpaginateitems-config) for a complete description of the pagination API.

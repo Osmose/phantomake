@@ -35,7 +35,7 @@ Since the blog index should be at `/blog`, create a file for it at `blog/index.h
   <%# For each blog post, show the title and description and link to the full post. %>
   <% for (const file of paginator.items) { %>
     <div class="blog-post">
-      <h2><a href="<%- file.url ->"><%- file.attributes.title %></a></h2>
+      <h2><a href="<%- file.url %>"><%- file.attributes.title %></a></h2>
       <p><%- file.attributes.description %></p>
     </div>
   <% } %>

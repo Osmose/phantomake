@@ -7,6 +7,7 @@ import remarkGfm from 'remark-gfm';
 import { all } from 'lowlight';
 import rehypeSlug from 'rehype-slug';
 import admonitionPlugin from 'remark-github-beta-blockquote-admonitions';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 
 export default function renderMarkdown(content: string) {
   return String(
@@ -22,6 +23,7 @@ export default function renderMarkdown(content: string) {
       })
       .use(remarkRehype, { allowDangerousHtml: true })
       .use(rehypeSlug)
+      .use(rehypeAutolinkHeadings, { behavior: 'wrap' })
       .use(rehypeHighlight, { languages: all })
       .use(rehypeStringify, { allowDangerousHtml: true })
       .processSync(content)
