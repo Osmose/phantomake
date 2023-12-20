@@ -10,6 +10,7 @@ import chokidar from 'chokidar';
 import send from 'send';
 import toml from 'toml';
 import consola from 'consola';
+import { DepGraph } from 'dependency-graph';
 
 import phantomake, { PhantomakeOptions } from './index';
 
@@ -52,6 +53,18 @@ async function makePhantomakeOptions(
   };
 }
 
+function replaceNode(dependencyGraph: DepGraph<string>, node: string, dependencies: string[]) {
+  // Remove existing dependencies
+  for (const existingDependency of dependencyGraph.directDependenciesOf(node)) {
+    dependencyGraph.removeDependency(node, existingDependency);
+  }
+
+  // Add new ones
+  for (const dependency of dependencies) {
+    dependencyGraph.addDependency(node, dependency);
+  }
+}
+
 program
   .command('build', { isDefault: true })
   .description('Build a directory and save the output')
@@ -84,26 +97,42 @@ program
       baseUrl: `http://${options.host}:${options.port}`,
     });
 
+    let dependencyGraph: DepGraph<string>;
     consola.start(`Performing initial build of ${watchDirectory}`);
     try {
-      await phantomake(watchDirectory, tempOutputDirectory, phantomakeOptions);
+      dependencyGraph = (await phantomake(watchDirectory, tempOutputDirectory, phantomakeOptions)).dependencyGraph;
       consola.success('Build succeeded');
     } catch (err) {
       consola.error(err?.toString());
+      return;
     }
 
     // Only run one make call at a time; if a change happens during a run, finish the current one and schedule
     // a re-run when it finishes.
     let makePromise: Promise<void> | null = null;
-    let remakeAfterFinish = false;
-    function runPhantomake() {
+    let pendingChangedFiles: string[] = [];
+    function runPhantomake(changedFiles: string[]) {
       if (makePromise) {
-        remakeAfterFinish = true;
+        pendingChangedFiles = pendingChangedFiles.concat(changedFiles);
       } else {
-        makePromise = phantomake(watchDirectory, tempOutputDirectory, phantomakeOptions)
+        const matchFiles = changedFiles.flatMap((relativeFilePath) => [
+          relativeFilePath,
+          ...dependencyGraph.dependantsOf(relativeFilePath), // Include files that depend on changed files in build
+        ]);
+        consola.verbose(`Rebuilding files: \n  ${matchFiles.join('\n  ')}`);
+
+        makePromise = phantomake(watchDirectory, tempOutputDirectory, {
+          ...phantomakeOptions,
+          matchFiles,
+        })
           .then(
-            () => {
+            (globalContext) => {
               consola.success('Build succeeded');
+
+              // Update dependencies only for files that actually got rendered
+              for (const fileName of matchFiles) {
+                replaceNode(dependencyGraph, fileName, globalContext.dependencyGraph.directDependenciesOf(fileName));
+              }
             },
             (err) => {
               consola.error(err?.toString());
@@ -111,9 +140,10 @@ program
           )
           .finally(() => {
             makePromise = null;
-            if (remakeAfterFinish) {
-              remakeAfterFinish = false;
-              runPhantomake();
+            if (pendingChangedFiles.length > 0) {
+              const rerunChangedFiles = pendingChangedFiles;
+              pendingChangedFiles = [];
+              runPhantomake(rerunChangedFiles);
             }
           });
       }
@@ -124,7 +154,7 @@ program
       watcher.on('all', async (event, filename) => {
         const relativeFilename = nodePath.relative(watchDirectory, filename);
         consola.log(`Detected ${event} in ${relativeFilename}, rebuilding`);
-        runPhantomake();
+        runPhantomake([relativeFilename]);
       });
     });
 

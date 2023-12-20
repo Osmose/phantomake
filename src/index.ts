@@ -47,6 +47,10 @@ class Templates {
     return template.render({ ...data, ctx: template.context });
   }
 
+  contextFor(templateName: string) {
+    return this.templates[templateName].context;
+  }
+
   static async fromInputFiles(globalContext: GlobalContext, inputFiles: InputFile[]) {
     const templates: { [name: string]: Template } = {};
     for (const inputFile of inputFiles) {
@@ -54,11 +58,13 @@ class Templates {
         continue;
       }
 
+      const context = globalContext.fileContext(inputFile);
       templates[inputFile.parsedRelativePath.name] = {
         render: ejs.compile(await inputFile.file.text(), {
           filename: inputFile.path,
+          includer: context._includer,
         }),
-        context: globalContext.fileContext(inputFile),
+        context,
       };
     }
 
@@ -90,6 +96,10 @@ async function renderOutput(inputFile: InputFile, globalContext: GlobalContext, 
   const attributes = inputFile.attributes;
   if (attributes.template) {
     output.content = templates.apply(attributes.template, { ctx: context, output });
+
+    // Add template to the input file's dependencies
+    const templateInputFile = templates.contextFor(attributes.template).file;
+    globalContext.addDependency(inputFile, templateInputFile);
   }
 
   return output;
@@ -100,6 +110,9 @@ export interface PhantomakeOptions {
 
   /** URL / domain name to be prepended to absolute URLs. */
   baseUrl?: string;
+
+  /** Only build input files that match the given file paths. */
+  matchFiles?: string[];
 }
 
 export default async function phantomake(
@@ -124,6 +137,14 @@ export default async function phantomake(
     // Dot directories / dotfiles are not processed
     if (inputFile.parsedRelativePath.name.startsWith('.') || inputFile.isWithinDotDirectory) {
       continue;
+    }
+
+    // If matchFiles is specified, only process input files that match the given paths
+    if (options.matchFiles) {
+      const matchingPath = options.matchFiles.find((filePath) => inputFile.relativePath === filePath);
+      if (!matchingPath) {
+        continue;
+      }
     }
 
     if (inputFile.isText) {
@@ -166,4 +187,7 @@ export default async function phantomake(
 
   // Write output
   await fs.cp(tempOutputDirectory, outputDirectory, { recursive: true });
+
+  // TODO: Maybe return a more sane result rather than just returning the global context
+  return globalContext;
 }

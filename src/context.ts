@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { globSync } from 'glob';
 import _ from 'lodash';
 import renderMarkdown from './markdown';
+import { DepGraph } from 'dependency-graph';
 
 interface GlobalContextOptions {
   baseUrl?: string;
@@ -14,12 +15,18 @@ interface GlobalContextOptions {
 export class GlobalContext {
   public readonly inputFileMap: Record<string, InputFile> = {};
   public readonly paginators: Record<string, Paginator<any>> = {};
+  public readonly dependencyGraph: DepGraph<string> = new DepGraph();
   private fileContexts: Record<string, FileContext> = {};
 
   constructor(inputFiles: InputFile[], public readonly options: GlobalContextOptions = {}) {
     for (const inputFile of inputFiles) {
       this.inputFileMap[inputFile.path] = inputFile;
+      this.dependencyGraph.addNode(inputFile.relativePath);
     }
+  }
+
+  addDependency(inputFile: InputFile, dependencyInputFile: InputFile) {
+    this.dependencyGraph.addDependency(inputFile.relativePath, dependencyInputFile.relativePath);
   }
 
   fileContext(inputFile: InputFile) {
@@ -47,7 +54,10 @@ interface GetFilesOptions {
 
 /** Contains data about the file currently being rendered, as well as utility functions for EJS. */
 export class FileContext {
-  constructor(private globalCtx: GlobalContext, public readonly file: InputFile) {}
+  constructor(private globalCtx: GlobalContext, public readonly file: InputFile) {
+    // Bind so that we can pass this as around as a function argument
+    this._includer = this._includer.bind(this);
+  }
 
   getFiles(pattern: string, options: GetFilesOptions = {}) {
     const paths = globSync(pattern, { cwd: nodePath.dirname(this.file.path), absolute: true });
@@ -68,7 +78,22 @@ export class FileContext {
       }
     }
 
+    // Add to dependencies list
+    for (const file of files) {
+      this.globalCtx.addDependency(this.file, file);
+    }
+
     return files;
+  }
+
+  /** Passed as the includer option to EJS so we can capture included dependencies. */
+  _includer(originalPath: string, parsedPath: string) {
+    const inputFile = this.globalCtx.inputFileMap[parsedPath];
+    if (inputFile) {
+      this.globalCtx.addDependency(this.file, inputFile);
+    }
+
+    return { filename: parsedPath };
   }
 
   paginate<T>(items: T[], config?: Partial<PaginatorConfig>) {
@@ -106,7 +131,15 @@ export class FileContext {
   }
 
   readJson(path: string) {
-    const file = fs.readFileSync(nodePath.resolve(this.file.path, '..', path), { encoding: 'utf-8' });
+    const resolvedPath = nodePath.resolve(this.file.path, '..', path);
+
+    // Store dependency
+    const jsonInputFile = this.globalCtx.inputFileMap[resolvedPath];
+    if (jsonInputFile) {
+      this.globalCtx.addDependency(this.file, jsonInputFile);
+    }
+
+    const file = fs.readFileSync(resolvedPath, { encoding: 'utf-8' });
     return JSON.parse(file);
   }
 }

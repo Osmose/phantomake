@@ -41,7 +41,7 @@ const EJSProcessor: TextFileProcessor = {
       throw new Error(`Input file ${inputFile.relativePath} is missing it's body.`);
     }
 
-    return ejs.render(inputFile.body, { ctx: context }, { filename: inputFile.path });
+    return ejs.render(inputFile.body, { ctx: context }, { filename: inputFile.path, includer: context._includer });
   },
 };
 
