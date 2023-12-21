@@ -55,8 +55,12 @@ async function makePhantomakeOptions(
 
 function replaceNode(dependencyGraph: DepGraph<string>, node: string, dependencies: string[]) {
   // Remove existing dependencies
-  for (const existingDependency of dependencyGraph.directDependenciesOf(node)) {
-    dependencyGraph.removeDependency(node, existingDependency);
+  if (dependencyGraph.hasNode(node)) {
+    for (const existingDependency of dependencyGraph.directDependenciesOf(node)) {
+      dependencyGraph.removeDependency(node, existingDependency);
+    }
+  } else {
+    dependencyGraph.addNode(node);
   }
 
   // Add new ones
@@ -115,10 +119,14 @@ program
       if (makePromise) {
         pendingChangedFiles = pendingChangedFiles.concat(changedFiles);
       } else {
-        const matchFiles = changedFiles.flatMap((relativeFilePath) => [
-          relativeFilePath,
-          ...dependencyGraph.dependantsOf(relativeFilePath), // Include files that depend on changed files in build
-        ]);
+        const matchFiles = changedFiles.flatMap((relativeFilePath) => {
+          // Include files that depend on changed files in build
+          let changed = [relativeFilePath];
+          if (dependencyGraph.hasNode(relativeFilePath)) {
+            changed = changed.concat(dependencyGraph.dependantsOf(relativeFilePath));
+          }
+          return changed;
+        });
         consola.verbose(`Rebuilding files: \n  ${matchFiles.join('\n  ')}`);
 
         makePromise = phantomake(watchDirectory, tempOutputDirectory, {
@@ -131,7 +139,11 @@ program
 
               // Update dependencies only for files that actually got rendered
               for (const fileName of matchFiles) {
-                replaceNode(dependencyGraph, fileName, globalContext.dependencyGraph.directDependenciesOf(fileName));
+                let newDependencies: string[] = [];
+                if (globalContext.dependencyGraph.hasNode(fileName)) {
+                  newDependencies = globalContext.dependencyGraph.directDependenciesOf(fileName);
+                }
+                replaceNode(dependencyGraph, fileName, newDependencies);
               }
             },
             (err) => {

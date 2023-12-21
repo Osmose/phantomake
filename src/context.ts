@@ -26,6 +26,9 @@ export class GlobalContext {
   }
 
   addDependency(inputFile: InputFile, dependencyInputFile: InputFile) {
+    if (!this.dependencyGraph.hasNode(inputFile.relativePath)) {
+      this.dependencyGraph.addNode(inputFile.relativePath);
+    }
     this.dependencyGraph.addDependency(inputFile.relativePath, dependencyInputFile.relativePath);
   }
 
