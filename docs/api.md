@@ -89,6 +89,23 @@ URLs are parsed relative to the EJS file that `ctx.absolutify()` is called in.
 #### `ctx.readJson(path)`
 The `ctx.readJson()` method reads a file located at the given path (relative to the current EJS file) and parses it as JSON, returning the parsed result.
 
+---
+
+#### `ctx.now()`
+Returns a [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) object for the time at which the site was most recently generated.
+
+---
+
+#### `ctx.currentUrl(absolute?)`
+Returns the URL for the current file. If `absolute` is true, returns an absolute URI using [`ctx.absolutify`](#ctxabsolutifyurl), which requires the `--base-url` option.
+
+---
+
+#### `ctx.tagUri(uri, date?)`
+Creates a ([tag URI](https://www.ietf.org/rfc/rfc4151.txt)) based on the given URI and date. If a date is not given, the date of generation is used.
+
+Tag URIs are useful when generating [Atom feeds](examples/atom_feed.html) that require unique IDs that are valid [IRIs](https://en.wikipedia.org/wiki/Internationalized_Resource_Identifier).
+
 ### The `InputFile` class
 Every file in the source directory passed to Phantomake has an instance of the `InputFile` class that stores metadata about the file used during processing. These instances are available through the [`ctx.file`](#ctxfile) property or are returned from [`ctx.getFiles()`](#ctxgetfilespattern-options).
 

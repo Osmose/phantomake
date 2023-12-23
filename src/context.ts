@@ -119,8 +119,8 @@ export class FileContext {
     return renderMarkdown(content);
   }
 
-  formatDate(dateString: string, template: string) {
-    return dayjs(dateString).format(template);
+  formatDate(date: string | number | Date, template?: string) {
+    return dayjs(date).format(template);
   }
 
   absolutify(url: string) {
@@ -144,6 +144,25 @@ export class FileContext {
 
     const file = fs.readFileSync(resolvedPath, { encoding: 'utf-8' });
     return JSON.parse(file);
+  }
+
+  now() {
+    return new Date();
+  }
+
+  currentUrl(absolute = false) {
+    if (absolute) {
+      return this.absolutify(this.file.url);
+    }
+
+    return this.file.url;
+  }
+
+  tagUri(uri: string, date = new Date()) {
+    const url = new URL(uri);
+    return `tag:${url.host},${dayjs(date).format('YYYY-MM-DD')}:${url.pathname}${
+      url.hash.length > 1 ? '/' + url.hash.substring(1) : ''
+    }`;
   }
 }
 
@@ -195,9 +214,5 @@ class Paginator<T> {
     const { itemsPerPage } = this.config;
     const start = (this.currentPage - 1) * itemsPerPage;
     return this.allItems.slice(start, start + itemsPerPage);
-  }
-
-  relativeOutputPathForPage(pageNumber: number) {
-    return;
   }
 }
