@@ -8,6 +8,7 @@ You can download the latest binaries for your platform here:
 
 - [MacOS](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-macos.tar.gz)
 - [Linux](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-linux.tar.gz)
+- [Windows](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-windows.zip)
 
 Phantomake does not currently have an update mechanism—you will need to redownload the binary to update to a newer version.
 
