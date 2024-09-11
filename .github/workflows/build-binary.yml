@@ -4,7 +4,7 @@ on:
     tags:
       - '*'
 jobs:
-  build-binary:
+  build-binary-unix:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -17,7 +17,7 @@ jobs:
       contents: write
     steps:
       - name: Setup bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - name: Check out repository code
@@ -37,6 +37,32 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: phantomake-${{ matrix.binary-name }}.tar.gz
+  build-binary-windows:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Bun install
+        run: |
+          bun install
+      - name: Build phantomake (Windows)
+        run: |
+          bun build-cli
+          Compress-Archive -Path phantomake.exe -Destination phantomake-windows.zip
+      - uses: actions/upload-artifact@v3
+        with:
+          name: phantomake-windows.zip
+          path: phantomake-windows.zip
+      - name: Upload binary to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: phantomake-windows.zip
   upload-source:
     runs-on: ubuntu-latest
     permissions:
