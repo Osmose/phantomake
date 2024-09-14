@@ -168,7 +168,4 @@ dist
 .yarn/install-state.gz
 .pnp.\*
 
-example_dist
-/phantomake
 .DS_store
-docs_output
