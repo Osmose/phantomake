@@ -21,6 +21,12 @@ export const useMainStore = create<MainStoreState>((set, get) => ({
   async openProject(projectDirectory) {
     const projectName = await basename(projectDirectory);
     set(() => ({ projectDirectory, projectName }));
+
+    // Clean up watch process if it was running
+    if (get().watchProcess) {
+      await get().stopWatcher();
+      set({ watchLogs: [] });
+    }
   },
   closeProject() {
     set(() => ({ projectDirectory: null, projectName: null }));
