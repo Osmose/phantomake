@@ -5,8 +5,13 @@ import { open } from '@tauri-apps/api/dialog';
 import { colors } from './constants';
 import { useMainStore } from './store';
 import { PiFolder } from 'react-icons/pi';
+import { Tooltip } from 'react-tooltip';
+import PublishPage from './components/PublishPage';
 
-const TABS = [{ name: 'Watcher', component: WatcherPage }];
+const TABS = [
+  { name: 'Watcher', component: WatcherPage },
+  { name: 'Publish', component: PublishPage },
+];
 
 const styles = {
   container: css`
@@ -24,6 +29,9 @@ const styles = {
 
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
       Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    user-select: none;
+    cursor: default;
   `,
   openProjectContainer: css`
     flex: 1;
@@ -48,7 +56,10 @@ const styles = {
 
     &:hover {
       background: ${colors.grey};
-      cursor: pointer;
+    }
+
+    &:active {
+      background: ${colors.deepGrey};
     }
   `,
   currentProjectIcon: css`
@@ -90,6 +101,7 @@ const styles = {
   tabContent: css`
     grid-area: 1 / 2 / 3 / 3;
     position: relative;
+    overflow: hidden;
   `,
 };
 
@@ -122,7 +134,13 @@ export default function App() {
 
   return (
     <div className={styles.container}>
-      <button className={styles.currentProjectButton} title="Open new project">
+      <button
+        className={styles.currentProjectButton}
+        data-tooltip-id="main-tooltip"
+        data-tooltip-content={projectDirectory}
+        data-tooltip-position="bottom"
+        onClick={handleClickOpen}
+      >
         <PiFolder className={styles.currentProjectIcon} size={32} />
         <div className={styles.currentProjectLabel}>Current project</div>
         <div className={styles.currentProjectName}>{projectName}</div>
@@ -141,6 +159,7 @@ export default function App() {
       <div className={styles.tabContent}>
         <TabContent />
       </div>
+      <Tooltip id="main-tooltip" />
     </div>
   );
 }

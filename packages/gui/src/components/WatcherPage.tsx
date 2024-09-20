@@ -19,7 +19,7 @@ const styles = {
   `,
   watcherButton: css`
     border: none;
-    background: ${colors.lightGrey};
+    background: ${colors.grey};
     color: ${colors.white};
     grid-area: 1 / 1 / 2 / 2;
     align-self: stretch;
@@ -28,6 +28,14 @@ const styles = {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    &:hover {
+      background: ${colors.lightGrey};
+    }
+
+    &:active {
+      background: ${colors.darkGrey};
+    }
   `,
   watcherStatus: css`
     grid-area: 1 / 2 / 2 / 3;
