@@ -35,7 +35,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: phantomake-${{ matrix.binary-name }}.tar.gz
-          path: phantomake-${{ matrix.binary-name }}.tar.gz
+          path: ./packages/phantomake/phantomake-${{ matrix.binary-name }}.tar.gz
       - name: Upload binary to release
         uses: softprops/action-gh-release@v1
         with:
@@ -64,7 +64,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: phantomake-windows.zip
-          path: phantomake-windows.zip
+          path: ./packages/phantomake/phantomake-windows.zip
       - name: Upload binary to release
         uses: softprops/action-gh-release@v1
         with:
