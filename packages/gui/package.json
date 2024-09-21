@@ -9,7 +9,8 @@
     "dev": "tauri dev",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "tauri": "tauri"
   },
   "dependencies": {
     "@emotion/css": "^11.13.0",
