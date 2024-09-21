@@ -32,7 +32,7 @@ jobs:
         run: |
           bun run build
           tar -zcvf phantomake-${{ matrix.binary-name }}.tar.gz phantomake
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: phantomake-${{ matrix.binary-name }}.tar.gz
           path: ./packages/phantomake/phantomake-${{ matrix.binary-name }}.tar.gz
@@ -61,7 +61,7 @@ jobs:
         run: |
           bun run build
           Compress-Archive -Path phantomake.exe -Destination phantomake-windows.zip
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: phantomake-windows.zip
           path: ./packages/phantomake/phantomake-windows.zip
