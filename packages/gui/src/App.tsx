@@ -37,9 +37,29 @@ const styles = {
     overflow: hidden;
   `,
   openProjectContainer: css`
-    flex: 1;
+    grid-area: 1 / 1 / 3 / 3;
     text-align: center;
-    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  `,
+  emptyStateButton: css`
+    background: ${colors.grey};
+    color: ${colors.white};
+    border: none;
+    font-size: 2em;
+    padding: 10px 20px;
+    cursor: pointer;
+
+    &:hover {
+      background: ${colors.lightGrey};
+    }
+
+    &:active {
+      background: ${colors.darkGrey};
+    }
   `,
   currentProjectButton: css`
     grid-area: 1 / 1 / 2 / 2;
@@ -146,7 +166,11 @@ export default function App() {
     return (
       <div className={styles.container}>
         <div className={styles.openProjectContainer}>
-          <button onClick={handleClickOpen}>Open Project</button>
+          <img src={phantoUrl} />
+          <p>Welcome to Phantomake!</p>
+          <button className={styles.emptyStateButton} onClick={handleClickOpen}>
+            Open Project
+          </button>
         </div>
       </div>
     );
