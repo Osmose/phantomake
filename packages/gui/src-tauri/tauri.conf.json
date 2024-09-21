@@ -46,7 +46,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "me.mkelly.phantomake",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
