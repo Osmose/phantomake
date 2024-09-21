@@ -4,9 +4,11 @@ import { css, cx } from '@emotion/css';
 import { open } from '@tauri-apps/api/dialog';
 import { colors } from './constants';
 import { useMainStore } from './store';
-import { PiFolder } from 'react-icons/pi';
+import { PiFolder, PiPulse } from 'react-icons/pi';
 import { Tooltip } from 'react-tooltip';
 import PublishPage from './components/PublishPage';
+import { basename } from '@tauri-apps/api/path';
+import phantoUrl from './phantomake.png';
 
 const TABS = [
   { name: 'Watcher', component: WatcherPage },
@@ -32,6 +34,7 @@ const styles = {
 
     user-select: none;
     cursor: default;
+    overflow: hidden;
   `,
   openProjectContainer: css`
     flex: 1;
@@ -46,6 +49,7 @@ const styles = {
     text-align: left;
     background: ${colors.darkGrey};
     color: ${colors.white};
+    cursor: pointer;
 
     display: grid;
     grid-template-columns: 32px 1fr;
@@ -86,13 +90,15 @@ const styles = {
     font-size: 1.5em;
     margin: 0;
     padding: 10px 0;
-
-    li {
-      margin: 0;
-      padding: 10px;
-      text-align: right;
-      cursor: default;
-    }
+  `,
+  tab: css`
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+    padding: 10px;
+    cursor: default;
   `,
   selectedTab: css`
     background: ${colors.grey};
@@ -103,12 +109,26 @@ const styles = {
     position: relative;
     overflow: hidden;
   `,
+  phanto: css`
+    position: absolute;
+    bottom: -80px;
+    left: -5px;
+  `,
 };
 
 export default function App() {
-  const { projectDirectory, projectName, openProject } = useMainStore();
+  const { projectDirectory, openProject, watchProcess } = useMainStore();
   const [currentTabIndex, setCurrentTabIndex] = React.useState(0);
   const TabContent = TABS[currentTabIndex].component;
+
+  const [projectName, setProjectName] = React.useState('');
+  React.useEffect(() => {
+    if (projectDirectory) {
+      basename(projectDirectory).then(setProjectName);
+    } else {
+      setProjectName('');
+    }
+  }, [projectDirectory]);
 
   const handleClickOpen = async () => {
     const directoryPath = await open({
@@ -150,11 +170,19 @@ export default function App() {
           <li
             key={index}
             onClick={() => setCurrentTabIndex(index)}
-            className={cx({ [styles.selectedTab]: index === currentTabIndex })}
+            className={cx(styles.tab, { [styles.selectedTab]: index === currentTabIndex })}
           >
-            {name}
+            {name === 'Watcher' && watchProcess && <PiPulse />} {name}
           </li>
         ))}
+
+        <img
+          src={phantoUrl}
+          className={styles.phanto}
+          data-tooltip-id="main-tooltip"
+          data-tooltip-content="Thanks for using Phantomake!"
+          data-tooltip-position="top"
+        />
       </ol>
       <div className={styles.tabContent}>
         <TabContent />

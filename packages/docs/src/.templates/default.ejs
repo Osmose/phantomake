@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <meta property="og:title" content="Phantomake <%- output.file.attributes.title %>" />
     <meta property="og:description" content="A file-focused static site generator." />
@@ -15,11 +15,18 @@
     <meta property="og:site_name" content="Phantomake" />
 
     <title>Phantomake Docs</title>
-    <link rel="icon" href="<%- ctx.absolutify('../favicon.ico') %>"/>
+    <link rel="icon" href="<%- ctx.absolutify('../favicon.ico') %>" />
 
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
-    <link rel="stylesheet" type="text/css" href="<%- ctx.absolutify('../styles.css') %>">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+    />
+    <link rel="stylesheet" type="text/css" href="<%- ctx.absolutify('../styles.css') %>" />
   </head>
   <body>
     <header class="topbar">
@@ -28,9 +35,7 @@
           <a href="<%- ctx.absolutify('../') %>">Phantomake</a>
         </h1>
         <nav class="topbar-nav">
-          <div class="topbar-wide-nav">
-            <%- include('navlinks.ejs', { ctx, output }) %>
-          </div>
+          <div class="topbar-wide-nav"><%- include('navlinks.ejs', { ctx, output }) %></div>
           <details class="topbar-narrow-nav">
             <summary>
               <svg
@@ -43,7 +48,7 @@
                 width="32"
                 height="32"
               >
-                <path d="M3 12H21M3 6H21M3 18H21" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3 12H21M3 6H21M3 18H21" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </summary>
             <%- include('navlinks.ejs', { ctx, output }) %>
@@ -55,9 +60,7 @@
       <header class="page-header">
         <h2 class="page-title"><%- output.file.attributes.title %></h2>
       </header>
-      <div class="page-content">
-        <%- output.content %>
-      </div>
+      <div class="page-content"><%- output.content %></div>
     </main>
     <footer class="footer">
       <p>Site generated with Phantomake. Made by <a href="https://mkelly.me/osmose">Osmose</a>.</p>

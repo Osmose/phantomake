@@ -5,6 +5,7 @@ import { PiFolder } from 'react-icons/pi';
 import { open } from '@tauri-apps/api/dialog';
 import { Command } from '@tauri-apps/api/shell';
 import { useMainStore } from '../store';
+import { BeatLoader } from 'react-spinners';
 
 const styles = {
   header: css`
@@ -86,16 +87,39 @@ const styles = {
       color: ${colors.whiteGrey};
     }
   `,
+  buildResult: css`
+    border: 1px solid ${colors.lightGrey};
+    background: ${colors.whiteGrey};
+    padding: 10px;
+    margin-top: 10px;
+  `,
+  buildResultSuccess: css`
+    border-color: ${colors.green};
+    background: ${colors.lime};
+  `,
+  buildResultError: css`
+    border-color: ${colors.maroon};
+    background: ${colors.red};
+    color: ${colors.white};
+  `,
+  buildResultErrorText: css`
+    overflow: auto;
+  `,
+  loaderContainer: css`
+    margin-top: 30px;
+    text-align: center;
+  `,
 };
 
 interface BuildResult {
   status: 'success' | 'error';
+  text: string;
 }
 
 export default function DirectoryForm() {
-  const { projectDirectory } = useMainStore();
-  const [outputPath, setOutputPath] = React.useState<null | string>(null);
+  const { projectDirectory, outputDirectory, setOutputDirectory } = useMainStore();
   const [buildResult, setBuildResult] = React.useState<null | BuildResult>(null);
+  const [building, setBuilding] = React.useState(false);
 
   const handleClickChoose = async () => {
     const directoryPath = await open({
@@ -105,19 +129,23 @@ export default function DirectoryForm() {
       title: 'Open project directory',
     });
     if (directoryPath) {
-      setOutputPath(directoryPath as string);
+      setOutputDirectory(directoryPath as string);
     }
   };
 
   const handleClickPublish = async () => {
-    if (outputPath === null) {
+    if (outputDirectory === null) {
       return;
     }
 
-    const command = Command.sidecar('binaries/phantomake', ['build', projectDirectory, outputPath]);
+    const command = Command.sidecar('binaries/phantomake', ['build', projectDirectory!, outputDirectory]);
+    setBuilding(true);
+    setBuildResult(null);
     const output = await command.execute();
+    setBuilding(false);
     setBuildResult({
       status: output.code === 0 ? 'success' : 'error',
+      text: output.stderr,
     });
   };
 
@@ -131,11 +159,11 @@ export default function DirectoryForm() {
       <div className={styles.directoryLabel}>Output directory</div>
       <div className={styles.directoryContainer}>
         <div className={styles.directory}>
-          {outputPath === null ? (
+          {outputDirectory === null ? (
             <span className={styles.unset}>Unset</span>
           ) : (
             <>
-              <PiFolder className={styles.directoryIcon} size={24} /> {outputPath}
+              <PiFolder className={styles.directoryIcon} size={24} /> {outputDirectory}
             </>
           )}
         </div>
@@ -145,12 +173,25 @@ export default function DirectoryForm() {
       </div>
       <button
         className={cx(styles.button, styles.publishButton)}
-        disabled={outputPath === null}
+        disabled={outputDirectory === null || building === true}
         onClick={handleClickPublish}
       >
         Publish
       </button>
-      {buildResult && <div>{buildResult.status}</div>}
+      {building && (
+        <div className={styles.loaderContainer}>
+          <BeatLoader color={colors.grey} />
+        </div>
+      )}
+      {buildResult?.status === 'success' && (
+        <div className={cx(styles.buildResult, styles.buildResultSuccess)}>Project was published successfully!</div>
+      )}
+      {buildResult?.status === 'error' && (
+        <div className={cx(styles.buildResult, styles.buildResultError)}>
+          <div>Project failed to build:</div>
+          <pre className={styles.buildResultErrorText}>{buildResult.text}</pre>
+        </div>
+      )}
     </>
   );
 }

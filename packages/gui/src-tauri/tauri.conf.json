@@ -18,6 +18,9 @@
       "path": {
         "all": true
       },
+      "fs": {
+        "exists": true
+      },
       "shell": {
         "sidecar": true,
         "open": true,

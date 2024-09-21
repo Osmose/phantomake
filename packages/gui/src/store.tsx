@@ -1,54 +1,78 @@
 import { Child, Command } from '@tauri-apps/api/shell';
 import { create } from 'zustand';
-import { basename } from '@tauri-apps/api/path';
+import { persist, createJSONStorage } from 'zustand/middleware';
+
+let logIndex = 0;
+
+interface LogLine {
+  index: number;
+  text: string;
+}
 
 interface MainStoreState {
   projectDirectory: string | null;
-  projectName: string | null;
   openProject: (projectDirectory: string) => void;
   closeProject: () => void;
 
   watchProcess: null | Child;
-  watchLogs: string[];
+  watchLogs: LogLine[];
   startWatcher: () => Promise<void>;
   stopWatcher: () => Promise<void>;
+
+  outputDirectory: null | string;
+  setOutputDirectory: (outputDirectory: string | null) => void;
 }
 
-export const useMainStore = create<MainStoreState>((set, get) => ({
-  // Project management
-  projectDirectory: null,
-  projectName: null,
-  async openProject(projectDirectory) {
-    const projectName = await basename(projectDirectory);
-    set(() => ({ projectDirectory, projectName }));
+export const useMainStore = create<MainStoreState>()(
+  persist(
+    (set, get): MainStoreState => ({
+      // Project management
+      projectDirectory: null,
+      async openProject(projectDirectory) {
+        set(() => ({ projectDirectory }));
 
-    // Clean up watch process if it was running
-    if (get().watchProcess) {
-      await get().stopWatcher();
-      set({ watchLogs: [] });
+        // Clean up watch process if it was running
+        if (get().watchProcess) {
+          await get().stopWatcher();
+          set({ watchLogs: [] });
+        }
+      },
+      closeProject() {
+        set(() => ({ projectDirectory: null, projectName: null }));
+      },
+
+      // Watcher process
+      watchProcess: null,
+      watchLogs: [],
+      async startWatcher() {
+        const { projectDirectory, watchProcess } = get();
+        if (watchProcess || !projectDirectory) return;
+
+        const command = Command.sidecar('binaries/phantomake', ['watch', projectDirectory]);
+        command.stdout.on('data', (line) =>
+          set((state) => {
+            return { watchLogs: [...state.watchLogs, { index: logIndex++, text: line }].slice(-1000) };
+          })
+        );
+        command.stderr.on('data', (line) =>
+          set((state) => {
+            return { watchLogs: [...state.watchLogs, { index: logIndex++, text: line }].slice(-1000) };
+          })
+        );
+        set({ watchProcess: await command.spawn(), watchLogs: [] });
+      },
+      async stopWatcher() {
+        await get().watchProcess?.kill();
+        set({ watchProcess: null });
+      },
+
+      outputDirectory: null,
+      setOutputDirectory: (outputDirectory: string | null) => set({ outputDirectory }),
+    }),
+    {
+      name: 'phantoMainStore',
+      storage: createJSONStorage(() => window.localStorage),
+      partialize: (state) => ({ projectDirectory: state.projectDirectory, outputDirectory: state.outputDirectory }),
     }
-  },
-  closeProject() {
-    set(() => ({ projectDirectory: null, projectName: null }));
-  },
-
-  // Watcher process
-  watchProcess: null,
-  watchLogs: [],
-  async startWatcher() {
-    const { projectDirectory, watchProcess } = get();
-    if (watchProcess || !projectDirectory) return;
-
-    const command = Command.sidecar('binaries/phantomake', ['watch', projectDirectory]);
-    command.stdout.on('data', (line) =>
-      set((state) => {
-        return { watchLogs: [...state.watchLogs, line].slice(-1000) };
-      })
-    );
-    set({ watchProcess: await command.spawn(), watchLogs: [] });
-  },
-  async stopWatcher() {
-    await get().watchProcess?.kill();
-    set({ watchProcess: null });
-  },
-}));
+  )
+);

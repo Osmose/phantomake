@@ -212,7 +212,7 @@ EJS has an `include` function that pulls the content of another file and embeds 
 > Included files don't have access to the same variables as the current file, such as the file context. You can use the second argument to `include` to pass needed variables instead.
 >
 > ```erb
-> <%- include('.includes/shared_header.html', { title: ctx.file.attributes.title }) ->
+> <%- include('.includes/shared_header.html', { title: ctx.file.attributes.title }) %>
 > ```
 
 ##### Pagination

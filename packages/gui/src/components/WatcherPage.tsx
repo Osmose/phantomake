@@ -28,6 +28,7 @@ const styles = {
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 
     &:hover {
       background: ${colors.lightGrey};
@@ -109,7 +110,7 @@ export default function WatcherPage() {
 
       <div className={styles.watcherLogs}>
         {watchLogs.map((line) => (
-          <p>{line}</p>
+          <p key={line.index}>{line.text}</p>
         ))}
       </div>
     </div>
