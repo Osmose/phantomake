@@ -157,3 +157,4 @@ jobs:
           releaseName: ${{  github.ref_name }}
           args: ${{ matrix.args }}
           projectPath: ./packages/gui
+          distPath: ./packages/gui/dist
