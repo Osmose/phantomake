@@ -83,3 +83,77 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: source.tar.gz
+  publish-tauri:
+    needs: [build-binary-unix, build-binary-windows]
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: ./packages/gui/
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: 'macos-latest' # for Arm based macs (M1 and above).
+            args: '--target aarch64-apple-darwin'
+            artifact-name: phantomake-macos.tar.gz
+          - platform: 'macos-latest' # for Intel based macs.
+            args: '--target x86_64-apple-darwin'
+            artifact-name: phantomake-macos.tar.gz
+          - platform: 'ubuntu-latest'
+            args: ''
+            artifact-name: phantomake-linux.tar.gz
+          - platform: 'windows-latest'
+            args: ''
+            artifact-name: phantomake-windows.zip
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './packages/gui/src-tauri -> target'
+
+      - name: install frontend dependencies
+        run: bun install
+
+      - name: Download binary artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.artifact-name }}
+
+      - name: Copy Phantomake binary to tauri binaries dir (Unix)
+        if: matrix.platform != 'windows-latest'
+        run: |
+          mv ${{ matrix.artifact-name }} ./packages/gui/src-tauri/binaries/phantomake-$(rustc -Vv | grep host | cut -f2 -d' ')
+
+      - name: Copy Phantomake binary to tauri binaries dir (Windows)
+        if: matrix.platform == 'windows-latest'
+        run: |
+          Move-Item -Path ${{ matrix.artifact-name }} -Destination .\packages\gui\src-tauri\binaries\phantomake-$(rustc -Vv | Select-String "host:" | ForEach-Object {$_.Line.split(" ")[1]}).exe
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{  github.ref_name }}
+          args: ${{ matrix.args }}
