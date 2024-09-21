@@ -46,7 +46,7 @@ jobs:
       contents: write
     defaults:
       run:
-        working-directory: ./packages/docs/
+        working-directory: ./packages/phantomake/
     steps:
       - name: Setup bun
         uses: oven-sh/setup-bun@v2
