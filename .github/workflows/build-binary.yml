@@ -164,25 +164,25 @@ jobs:
         with:
           name: ${{ matrix.artifact-name }}
 
-      - name: Copy Phantomake binary to tauri binaries dir (Unix)
+      - name: Copy Phantomake binary to tauri bin dir (Unix)
         if: matrix.platform == 'ubuntu-latest'
         run: |
-          mv phantomake ./packages/gui/src-tauri/binaries/phantomake-$(rustc -Vv | grep host | cut -f2 -d' ')
+          mv phantomake ./packages/gui/src-tauri/bin/phantomake-$(rustc -Vv | grep host | cut -f2 -d' ')
 
-      - name: Copy Phantomake binary to tauri binaries dir (MacOS)
+      - name: Copy Phantomake binary to tauri bin dir (MacOS)
         if: matrix.platform == 'macos-latest'
         run: |
-          mv phantomake ./packages/gui/src-tauri/binaries/phantomake-universal-apple-darwin
-          cd ./packages/gui/src-tauri/binaries
+          mv phantomake ./packages/gui/src-tauri/bin/phantomake-universal-apple-darwin
+          cd ./packages/gui/src-tauri/bin
           ln -s phantomake-universal-apple-darwin phantomake-aarch64-apple-darwin
           ln -s phantomake-universal-apple-darwin phantomake-x86_64-apple-darwin
           pwd
           ls -l .
 
-      - name: Copy Phantomake binary to tauri binaries dir (Windows)
+      - name: Copy Phantomake binary to tauri bin dir (Windows)
         if: matrix.platform == 'windows-latest'
         run: |
-          Move-Item -Path phantomake.exe -Destination .\packages\gui\src-tauri\binaries\phantomake-$(rustc -Vv | Select-String "host:" | ForEach-Object {$_.Line.split(" ")[1]}).exe
+          Move-Item -Path phantomake.exe -Destination .\packages\gui\src-tauri\bin\phantomake-$(rustc -Vv | Select-String "host:" | ForEach-Object {$_.Line.split(" ")[1]}).exe
 
       - uses: tauri-apps/tauri-action@v0
         env:

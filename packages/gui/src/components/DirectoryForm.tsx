@@ -138,7 +138,7 @@ export default function DirectoryForm() {
       return;
     }
 
-    const command = Command.sidecar('binaries/phantomake', ['build', projectDirectory!, outputDirectory]);
+    const command = Command.sidecar('bin/phantomake', ['build', projectDirectory!, outputDirectory]);
     setBuilding(true);
     setBuildResult(null);
     const output = await command.execute();

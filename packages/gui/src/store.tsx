@@ -48,7 +48,7 @@ export const useMainStore = create<MainStoreState>()(
         const { projectDirectory, watchProcess } = get();
         if (watchProcess || !projectDirectory) return;
 
-        const command = Command.sidecar('binaries/phantomake', ['watch', projectDirectory]);
+        const command = Command.sidecar('bin/phantomake', ['watch', projectDirectory]);
         command.stdout.on('data', (line) =>
           set((state) => {
             return { watchLogs: [...state.watchLogs, { index: logIndex++, text: line }].slice(-1000) };
