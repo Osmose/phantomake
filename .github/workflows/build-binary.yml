@@ -34,8 +34,8 @@ jobs:
           tar -zcvf phantomake-${{ matrix.binary-name }}.tar.gz phantomake
       - uses: actions/upload-artifact@v4
         with:
-          name: phantomake-${{ matrix.binary-name }}.tar.gz
-          path: ./packages/phantomake/phantomake-${{ matrix.binary-name }}.tar.gz
+          name: phantomake-${{ matrix.binary-name }}
+          path: ./packages/phantomake/phantomake-${{ matrix.binary-name }}
       - name: Upload binary to release
         uses: softprops/action-gh-release@v1
         with:
@@ -63,8 +63,8 @@ jobs:
           Compress-Archive -Path phantomake.exe -Destination phantomake-windows.zip
       - uses: actions/upload-artifact@v4
         with:
-          name: phantomake-windows.zip
-          path: ./packages/phantomake/phantomake-windows.zip
+          name: phantomake-windows.exe
+          path: ./packages/phantomake/phantomake.exe
       - name: Upload binary to release
         uses: softprops/action-gh-release@v1
         with:
@@ -93,13 +93,13 @@ jobs:
         include:
           - platform: 'macos-latest'
             args: '--target universal-apple-darwin'
-            artifact-name: phantomake-macos.tar.gz
+            artifact-name: phantomake-macos
           - platform: 'ubuntu-latest'
             args: ''
-            artifact-name: phantomake-linux.tar.gz
+            artifact-name: phantomake-linux
           - platform: 'windows-latest'
             args: ''
-            artifact-name: phantomake-windows.zip
+            artifact-name: phantomake-windows.exe
 
     runs-on: ${{ matrix.platform }}
     steps:
