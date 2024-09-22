@@ -193,3 +193,4 @@ jobs:
           args: ${{ matrix.args }}
           projectPath: ./packages/gui
           tauriScript: bun tauri
+          includeDebug: true
