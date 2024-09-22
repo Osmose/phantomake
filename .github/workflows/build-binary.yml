@@ -24,7 +24,6 @@ jobs:
       - name: Build phantomake
         run: |
           bun run build
-          chmod +x phantomake
           tar -zcvf phantomake-linux.tar.gz phantomake
       - uses: actions/upload-artifact@v4
         with:
@@ -58,7 +57,6 @@ jobs:
           bun build src/cli.ts --compile --minify --target=bun-darwin-arm64 --outfile=phantomake-arm64
           bun build src/cli.ts --compile --minify --target=bun-darwin-x64 --outfile=phantomake-x64
           lipo -create -output phantomake phantomake-arm64 phantomake-x64
-          chmod +x phantomake
           tar -zcvf phantomake-macos.tar.gz phantomake
       - uses: actions/upload-artifact@v4
         with:
@@ -167,11 +165,13 @@ jobs:
       - name: Copy Phantomake binary to tauri bin dir (Unix)
         if: matrix.platform == 'ubuntu-latest'
         run: |
+          chmod +x phantomake
           mv phantomake ./packages/gui/src-tauri/bin/phantomake-$(rustc -Vv | grep host | cut -f2 -d' ')
 
       - name: Copy Phantomake binary to tauri bin dir (MacOS)
         if: matrix.platform == 'macos-latest'
         run: |
+          chmod +x phantomake
           mv phantomake ./packages/gui/src-tauri/bin/phantomake-universal-apple-darwin
           cd ./packages/gui/src-tauri/bin
           ln -s phantomake-universal-apple-darwin phantomake-aarch64-apple-darwin
