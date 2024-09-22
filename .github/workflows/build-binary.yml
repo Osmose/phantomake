@@ -147,6 +147,7 @@ jobs:
           mv ${{ matrix.artifact-name }} ./packages/gui/src-tauri/binaries/phantomake-universal-apple-darwin
           ln -s ./packages/gui/src-tauri/binaries/phantomake-universal-apple-darwin ./packages/gui/src-tauri/binaries/phantomake-aarch64-apple-darwin
           ln -s ./packages/gui/src-tauri/binaries/phantomake-universal-apple-darwin ./packages/gui/src-tauri/binaries/phantomake-x86_64-apple-darwin
+          ls -l ./packages/gui/src-tauri/binaries
 
       - name: Copy Phantomake binary to tauri binaries dir (Windows)
         if: matrix.platform == 'windows-latest'
