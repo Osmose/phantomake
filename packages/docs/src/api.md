@@ -54,7 +54,7 @@ If `options.sort` is provided, the list matched files will be sorted by an attri
 ---
 
 #### `ctx.paginate(items, config?)`
-The `ctx.paginate()` method marks the current file as being [paginated](features.md#pagination) and returns a [Paginator](#paginator) instance. The list of items will be split into pages of `config.itemsPerPage` items each, and the EJS file will be rendered once for each page. On each render, the Paginator instance returned by `ctx.paginate()` will have a different list of values in [`paginator.items`](#paginatoritems) as well as a different [`paginator.currentPage`](#paginatorcurrentpage) value.
+The `ctx.paginate()` method marks the current file as being [paginated](features.html#pagination) and returns a [Paginator](#paginator) instance. The list of items will be split into pages of `config.itemsPerPage` items each, and the EJS file will be rendered once for each page. On each render, the Paginator instance returned by `ctx.paginate()` will have a different list of values in [`paginator.items`](#paginatoritems) as well as a different [`paginator.currentPage`](#paginatorcurrentpage) value.
 
 `ctx.paginate()` can only be called once per-file. Subsequent calls will return the Paginator created by the first call in the file.
 

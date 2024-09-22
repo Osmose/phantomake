@@ -14,15 +14,25 @@ Phantomake is a static site generator with specific goals:
 - Can reuse common code (headers/footers/common HTML) across several pages with templates and includes
 - Can do pagination (e.g. for blog listings)
 
-Phantomake is written in [TypeScript](https://www.typescriptlang.org/) and runs on [Bun](https://bun.sh/).
+Phantomake is available as a terminal command or the PhantoGUI app for desktop use.
+
+Phantomake is written in [TypeScript](https://www.typescriptlang.org/) and runs on [Bun](https://bun.sh/). PhantoGUI is built using [Tauri](https://tauri.app/).
 
 ## Install
 
-Binaries for MacOS, Linux, and Windows are available from the [Releases](https://github.com/Osmose/phantomake/releases) page. Or, use the links below to fetch the latest builds:
+Binaries and PhantoGUI installers for MacOS, Linux, and Windows are available from the [Releases](https://github.com/Osmose/phantomake/releases) page. Or, use the links below to fetch the latest builds:
 
-- [MacOS](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-macos.tar.gz)
-- [Linux](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-linux.tar.gz)
-- [Windows](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-windows.zip)
+- `phantomake` standalone binary
+  - [MacOS](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-macos.tar.gz)
+  - [Linux](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-linux.tar.gz)
+  - [Windows](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-windows.zip)
+- PhantoGUI
+  - [MacOS](https://github.com/Osmose/phantomake/releases/latest/download/PhantoGUI_0.1.0_universal.dmg)
+  - [Windows Installer](https://github.com/Osmose/phantomake/releases/latest/download/PhantoGUI_0.1.0_x64_en-US.msi)
+  - Linux
+    - [AppImage](https://github.com/Osmose/phantomake/releases/latest/download/phanto-gui_0.1.0_amd64.AppImage)
+    - [deb](https://github.com/Osmose/phantomake/releases/latest/download/phanto-gui_0.1.0_amd64.deb)
+    - [rpm](https://github.com/Osmose/phantomake/releases/latest/download/phanto-gui-0.1.0-1.x86_64.rpm)
 
 If you have [Bun](https://bun.sh/) installed, you can also install Phantomake as a global package:
 
@@ -108,34 +118,6 @@ This will create an `output/index.html` file with our shared header:
     <p>Welcome to Phanto's Ghostlace Site</p>
   </body>
 </html>
-```
-
-## Developer Setup
-
-Before working on Phantomake you'll need a few tools:
-
-- [Git](https://git-scm.com/)
-- [Bun](https://bun.sh/)
-
-To set up your development copy:
-
-1. Check out the repo:
-
-   ```sh
-   git clone https://github.com/Osmose/phantomake.git
-   cd phantomake
-   ```
-
-2. Install the dependencies:
-
-   ```sh
-   bun install
-   ```
-
-After this you can run the Phantomake CLI of your development copy using `bun cli` instead of `phantomake`:
-
-```sh
-bun cli watch ./docs --verbose
 ```
 
 ## License

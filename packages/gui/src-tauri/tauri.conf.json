@@ -47,7 +47,7 @@
         "icons/icon.ico"
       ],
       "identifier": "me.mkelly.phantomake",
-      "longDescription": "",
+      "longDescription": "A file-focused static site generator.",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",

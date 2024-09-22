@@ -141,6 +141,7 @@ code:not(.hljs) {
   margin: 12px auto;
   padding: 0 var(--content-side-padding);
   max-width: var(--content-width);
+  position: relative;
 }
 
 .footer {
@@ -332,6 +333,10 @@ figcaption {
 .overview-summary-phanto .phanto {
   flex: 0 0 auto;
   margin-top: 1em;
+}
+
+.phantogui-screenshot {
+  width: 100%;
 }
 
 /* Show wide nav for resolutions > 800px, narrow nav for < 800px. */
