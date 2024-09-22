@@ -130,11 +130,9 @@ jobs:
         with:
           workspaces: './packages/gui/src-tauri -> target'
 
-      - name: Build frontend
+      - name: install frontend dependencies
         working-directory: ./packages/gui/
-        run: |
-          bun install
-          bun run build
+        run: bun install
 
       - name: Download binary artifact
         uses: actions/download-artifact@v4
@@ -151,13 +149,6 @@ jobs:
         run: |
           Move-Item -Path ${{ matrix.artifact-name }} -Destination .\packages\gui\src-tauri\binaries\phantomake-$(rustc -Vv | Select-String "host:" | ForEach-Object {$_.Line.split(" ")[1]}).exe
 
-      - name: Check for built files
-        working-directory: ./packages/gui
-        run: |
-          pwd
-          ls -la
-          ls -la dist
-
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -166,3 +157,4 @@ jobs:
           releaseName: ${{  github.ref_name }}
           args: ${{ matrix.args }}
           projectPath: ./packages/gui
+          tauriScript: bun tauri
