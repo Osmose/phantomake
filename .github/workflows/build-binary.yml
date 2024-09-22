@@ -155,6 +155,6 @@ jobs:
         with:
           tagName: ${{  github.ref_name }}
           releaseName: ${{  github.ref_name }}
-          args: ${{ matrix.args }} --verbose
+          args: ${{ matrix.args }}
           projectPath: ./packages/gui
           tauriScript: bun tauri
