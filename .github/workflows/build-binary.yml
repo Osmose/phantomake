@@ -4,15 +4,8 @@ on:
     tags:
       - '*'
 jobs:
-  build-binary-unix:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-          - os: macos-latest
-            binary-name: macos
-          - os: ubuntu-latest
-            binary-name: linux
+  build-binary-linux:
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     defaults:
@@ -31,15 +24,48 @@ jobs:
       - name: Build phantomake
         run: |
           bun run build
-          tar -zcvf phantomake-${{ matrix.binary-name }}.tar.gz phantomake
+          tar -zcvf phantomake-linux.tar.gz phantomake
       - uses: actions/upload-artifact@v4
         with:
-          name: phantomake-${{ matrix.binary-name }}
+          name: phantomake-linux
           path: ./packages/phantomake/phantomake
       - name: Upload binary to release
         uses: softprops/action-gh-release@v1
         with:
-          files: ./packages/phantomake/phantomake-${{ matrix.binary-name }}.tar.gz
+          files: ./packages/phantomake/phantomake-linux.tar.gz
+  build-binary-macos:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: ./packages/phantomake/
+    steps:
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Bun install
+        run: |
+          bun install
+      - name: Build phantomake
+        run: |
+          # Manually call compile because we need to make a universal binary
+          rm -rf node_modules/fsevents
+          bun build src/cli.ts --compile --minify --target=bun-darwin-arm64 --outfile=phantomake-arm64
+          bun build src/cli.ts --compile --minify --target=bun-darwin-x64 --outfile=phantomake-x64
+          lipo -create -output phantomake phantomake-arm64 phantomake-x64
+          tar -zcvf phantomake-macos.tar.gz phantomake
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phantomake-macos
+          path: ./packages/phantomake/phantomake
+      - name: Upload binary to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./packages/phantomake/phantomake-macos.tar.gz
   build-binary-windows:
     runs-on: windows-latest
     permissions:
@@ -84,7 +110,7 @@ jobs:
         with:
           files: source.tar.gz
   publish-tauri:
-    needs: [build-binary-unix, build-binary-windows]
+    needs: [build-binary-linux, build-binary-macos, build-binary-windows]
     permissions:
       contents: write
     strategy:
