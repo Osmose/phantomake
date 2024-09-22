@@ -145,7 +145,7 @@ jobs:
         if: matrix.platform == 'macos-latest'
         run: |
           mv phantomake ./packages/gui/src-tauri/binaries/phantomake-universal-apple-darwin
-          cd ./packages/gui/src-tauri-binaries
+          cd ./packages/gui/src-tauri/binaries
           ln -s phantomake-universal-apple-darwin phantomake-aarch64-apple-darwin
           ln -s phantomake-universal-apple-darwin phantomake-x86_64-apple-darwin
           pwd
