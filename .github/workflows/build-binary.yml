@@ -35,7 +35,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: phantomake-${{ matrix.binary-name }}
-          path: ./packages/phantomake/phantomake-${{ matrix.binary-name }}
+          path: ./packages/phantomake/phantomake
       - name: Upload binary to release
         uses: softprops/action-gh-release@v1
         with:
@@ -139,12 +139,12 @@ jobs:
       - name: Copy Phantomake binary to tauri binaries dir (Unix)
         if: matrix.platform == 'ubuntu-latest'
         run: |
-          mv ${{ matrix.artifact-name }} ./packages/gui/src-tauri/binaries/phantomake-$(rustc -Vv | grep host | cut -f2 -d' ')
+          mv phantomake ./packages/gui/src-tauri/binaries/phantomake-$(rustc -Vv | grep host | cut -f2 -d' ')
 
       - name: Copy Phantomake binary to tauri binaries dir (MacOS)
         if: matrix.platform == 'macos-latest'
         run: |
-          mv ${{ matrix.artifact-name }} ./packages/gui/src-tauri/binaries/phantomake-universal-apple-darwin
+          mv phantomake ./packages/gui/src-tauri/binaries/phantomake-universal-apple-darwin
           ln -s ./packages/gui/src-tauri/binaries/phantomake-universal-apple-darwin ./packages/gui/src-tauri/binaries/phantomake-aarch64-apple-darwin
           ln -s ./packages/gui/src-tauri/binaries/phantomake-universal-apple-darwin ./packages/gui/src-tauri/binaries/phantomake-x86_64-apple-darwin
           ls -l ./packages/gui/src-tauri/binaries
@@ -152,7 +152,7 @@ jobs:
       - name: Copy Phantomake binary to tauri binaries dir (Windows)
         if: matrix.platform == 'windows-latest'
         run: |
-          Move-Item -Path ${{ matrix.artifact-name }} -Destination .\packages\gui\src-tauri\binaries\phantomake-$(rustc -Vv | Select-String "host:" | ForEach-Object {$_.Line.split(" ")[1]}).exe
+          Move-Item -Path phantomake.exe -Destination .\packages\gui\src-tauri\binaries\phantomake-$(rustc -Vv | Select-String "host:" | ForEach-Object {$_.Line.split(" ")[1]}).exe
 
       - uses: tauri-apps/tauri-action@v0
         env:
