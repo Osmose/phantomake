@@ -130,9 +130,11 @@ jobs:
         with:
           workspaces: './packages/gui/src-tauri -> target'
 
-      - name: install frontend dependencies
+      - name: Build frontend
         working-directory: ./packages/gui/
-        run: bun install
+        run: |
+          bun install
+          bun run build
 
       - name: Download binary artifact
         uses: actions/download-artifact@v4
