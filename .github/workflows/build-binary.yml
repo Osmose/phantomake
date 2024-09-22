@@ -145,9 +145,11 @@ jobs:
         if: matrix.platform == 'macos-latest'
         run: |
           mv phantomake ./packages/gui/src-tauri/binaries/phantomake-universal-apple-darwin
-          ln -s ./packages/gui/src-tauri/binaries/phantomake-universal-apple-darwin ./packages/gui/src-tauri/binaries/phantomake-aarch64-apple-darwin
-          ln -s ./packages/gui/src-tauri/binaries/phantomake-universal-apple-darwin ./packages/gui/src-tauri/binaries/phantomake-x86_64-apple-darwin
-          ls -l ./packages/gui/src-tauri/binaries
+          cd ./packages/gui/src-tauri-binaries
+          ln -s phantomake-universal-apple-darwin phantomake-aarch64-apple-darwin
+          ln -s phantomake-universal-apple-darwin phantomake-x86_64-apple-darwin
+          pwd
+          ls -l .
 
       - name: Copy Phantomake binary to tauri binaries dir (Windows)
         if: matrix.platform == 'windows-latest'
