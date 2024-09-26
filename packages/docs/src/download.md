@@ -37,4 +37,7 @@ PhantoGUI is a graphical application that lets you use Phantomake without having
   - [deb](https://github.com/Osmose/phantomake/releases/latest/download/phanto-gui_0.1.0_amd64.deb)
   - [rpm](https://github.com/Osmose/phantomake/releases/latest/download/phanto-gui-0.1.0-1.x86_64.rpm)
 
+> [!NOTE]
+> **MacOS Users:** PhantoGUI is an unsigned app, and modern MacOS will prevent you from launching it by default. You can follow the [Mac User Guide for opening Mac apps from unknown developers](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac) to add an exception for PhantoGUI.
+
 PhantoGUI does not currently have an update mechanism—you will need to redownload and reinstall the app to update to a newer version.
