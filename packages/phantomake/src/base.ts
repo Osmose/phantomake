@@ -59,7 +59,7 @@ export class InputFile {
     return (
       '/' +
       this.relativeOutputPath
-        .replace('\\', '/')
+        .replaceAll('\\', '/')
         .replace(/^\./, '')
         .replace(/index\.html$/, '')
     );
