@@ -1,9 +1,6 @@
 {
-  "name": "phantomake-workspace",
+  "name": "phantomake-project",
   "version": "1.0.0",
   "private": true,
-  "workspaces": ["packages/*"],
-  "dependencies": {
-    "phantomake": "workspace:*"
-  }
+  "workspaces": ["packages/*"]
 }
