@@ -79,7 +79,7 @@ Parses a date in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format, and 
 `ctx.absolutify()` takes a relative URL string and turns it into an absolute URL, with a full domain. Using this requires that you provide the `--base-url` option to `phantomake` containing the base origin that your static site will be hosted at:
 
 ```sh
-phantomake --base-url https://mkelly.me/phantomake docs docs_output
+phantomake --base-url https://osmose.ceo/phantomake docs docs_output
 ```
 
 URLs are parsed relative to the EJS file that `ctx.absolutify()` is called in.

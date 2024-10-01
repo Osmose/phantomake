@@ -2,7 +2,7 @@
   <a href="github.com/Osmose/phantomake"><img src="phantomake.png"></a>
   <h3>Phantomake</h3>
   <p>A file-focused static site generator.</p>
-  <p><a href="https://www.mkelly.me/phantomake/">Documentation</a> - <a href="https://www.mkelly.me/phantomake/download.html">Download</a> - <a href="https://www.mkelly.me/phantomake/examples/">Examples</a></p>
+  <p><a href="https://www.osmose.ceo/phantomake/">Documentation</a> - <a href="https://www.osmose.ceo/phantomake/download.html">Download</a> - <a href="https://www.osmose.ceo/phantomake/examples/">Examples</a></p>
 </div>
 
 ## About
@@ -57,7 +57,7 @@ Phantomake will transform files that meet one of the following criteria:
 
 All files that don't match any of these are copied without changes from the source to the output.
 
-See [the full documentation](https://www.mkelly.me/phantomake/features.html) for more information.
+See [the full documentation](https://www.osmose.ceo/phantomake/features.html) for more information.
 
 ### Example: Shared Header
 
