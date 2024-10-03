@@ -189,7 +189,7 @@ last_updated: 2017-4-25 08:57:00 -0700
 ---
 <div class="page">
   <h2><%- ctx.file.attributes.title %></h2>
-  <p>Last Updated: <%- ctx.formatDate(ctx.file.attributes.date, 'MMMM D, YYYY') %></p>
+  <p>Last Updated: <%- ctx.formatDate(ctx.file.attributes.last_updated, 'MMMM D, YYYY') %></p>
 </div>
 ```
 
