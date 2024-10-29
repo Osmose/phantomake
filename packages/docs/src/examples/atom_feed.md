@@ -60,7 +60,7 @@ Create a new file for your feed with an `.ejs` extension. We recommend naming it
           <!-- Use the frontmatter (available under file.attributes) to fill out post info. -->
           <title><%- file.attributes.title %></title>
           <link href="<%- ctx.absolutify(file.url) %>" />
-          <id><%- ctx.tagUri(ctx.absolutify(file.url)) %></id>
+          <id><%- ctx.tagUri(ctx.absolutify(file.url), new Date(file.attributes.date)) %></id>
           <published><%- ctx.formatDate(file.attributes.date) %></published>
         </entry>
       <% } %>

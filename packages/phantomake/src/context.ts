@@ -158,8 +158,12 @@ export class FileContext {
     return this.file.url;
   }
 
-  tagUri(uri: string, date = new Date()) {
+  tagUri(uri: string, date: Date) {
     const url = new URL(uri);
+    if (!date) {
+      throw new Error('tagUri must be passed a valid date object as the second argument.');
+    }
+
     return `tag:${url.host},${dayjs(date).format('YYYY-MM-DD')}:${url.pathname}${
       url.hash.length > 1 ? '/' + url.hash.substring(1) : ''
     }`;

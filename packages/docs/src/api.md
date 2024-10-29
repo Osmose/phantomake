@@ -101,8 +101,8 @@ Returns the URL for the current file. If `absolute` is true, returns an absolute
 
 ---
 
-#### `ctx.tagUri(uri, date?)`
-Creates a ([tag URI](https://www.ietf.org/rfc/rfc4151.txt)) based on the given URI and date. If a date is not given, the date of generation is used.
+#### `ctx.tagUri(uri, date)`
+Creates a ([tag URI](https://www.ietf.org/rfc/rfc4151.txt)) based on the given URI and date.
 
 Tag URIs are useful when generating [Atom feeds](examples/atom_feed.html) that require unique IDs that are valid [IRIs](https://en.wikipedia.org/wiki/Internationalized_Resource_Identifier).
 
