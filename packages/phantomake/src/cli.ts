@@ -65,6 +65,9 @@ function replaceNode(dependencyGraph: DepGraph<string>, node: string, dependenci
 
   // Add new ones
   for (const dependency of dependencies) {
+    if (!dependencyGraph.hasNode(dependency)) {
+      dependencyGraph.addNode(dependency);
+    }
     dependencyGraph.addDependency(node, dependency);
   }
 }
@@ -102,9 +105,12 @@ program
     });
 
     let dependencyGraph: DepGraph<string>;
+    let alwaysBuildFiles: Set<string>;
     consola.start(`Performing initial build of ${watchDirectory}`);
     try {
-      dependencyGraph = (await phantomake(watchDirectory, tempOutputDirectory, phantomakeOptions)).dependencyGraph;
+      const globalContext = await phantomake(watchDirectory, tempOutputDirectory, phantomakeOptions);
+      dependencyGraph = globalContext.dependencyGraph;
+      alwaysBuildFiles = globalContext.alwaysBuildFiles;
       consola.success('Build succeeded');
     } catch (err) {
       consola.error(err?.toString());
@@ -119,14 +125,17 @@ program
       if (makePromise) {
         pendingChangedFiles = pendingChangedFiles.concat(changedFiles);
       } else {
-        const matchFiles = changedFiles.flatMap((relativeFilePath) => {
-          // Include files that depend on changed files in build
-          let changed = [relativeFilePath];
-          if (dependencyGraph.hasNode(relativeFilePath)) {
-            changed = changed.concat(dependencyGraph.dependantsOf(relativeFilePath));
-          }
-          return changed;
-        });
+        const matchFiles = [
+          ...alwaysBuildFiles,
+          ...changedFiles.flatMap((relativeFilePath) => {
+            // Include files that depend on changed files in build
+            let changed = [relativeFilePath];
+            if (dependencyGraph.hasNode(relativeFilePath)) {
+              changed = changed.concat(dependencyGraph.dependantsOf(relativeFilePath));
+            }
+            return changed;
+          }),
+        ];
         consola.verbose(`Rebuilding files: \n  ${matchFiles.join('\n  ')}`);
 
         makePromise = phantomake(watchDirectory, tempOutputDirectory, {
@@ -145,6 +154,9 @@ program
                 }
                 replaceNode(dependencyGraph, fileName, newDependencies);
               }
+
+              // Track new files that need to always be built if needed
+              alwaysBuildFiles = alwaysBuildFiles.union(globalContext.alwaysBuildFiles);
             },
             (err) => {
               consola.error(err?.toString());

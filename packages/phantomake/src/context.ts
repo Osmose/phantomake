@@ -16,6 +16,7 @@ export class GlobalContext {
   public readonly inputFileMap: Record<string, InputFile> = {};
   public readonly paginators: Record<string, Paginator<any>> = {};
   public readonly dependencyGraph: DepGraph<string> = new DepGraph();
+  public readonly alwaysBuildFiles: Set<string> = new Set();
   private fileContexts: Record<string, FileContext> = {};
 
   constructor(inputFiles: InputFile[], public readonly options: GlobalContextOptions = {}) {
@@ -85,6 +86,10 @@ export class FileContext {
     for (const file of files) {
       this.globalCtx.addDependency(this.file, file);
     }
+
+    // Files that use globs are marked as always needing a rebuild in case new
+    // files are added that might affect their content.
+    this.globalCtx.alwaysBuildFiles.add(this.file.relativePath);
 
     return files;
   }
