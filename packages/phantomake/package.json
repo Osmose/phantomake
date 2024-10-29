@@ -1,7 +1,7 @@
 {
   "name": "phantomake",
   "description": "A file-focused static site generator",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "license": "ISC",
   "module": "src/index.ts",
   "bin": "./src/cli.ts",
