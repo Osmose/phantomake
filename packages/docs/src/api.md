@@ -150,7 +150,7 @@ A boolean indicating whether this file was detected as a text or binary file. Fi
 **TEXT FILES ONLY.** Contains the parsed YAML frontmatter for this file. Defaults to an empty object if no frontmatter is found.
 
 ### The `Paginator` class
-An instance of the `Paginator` class is returned from [`ctx.paginate`](#ctxpaginateitems-config). It contains a list of the items for the current page being rendered, as well as information on all the available pages to help build a pagination UI. See the [pagination example](./examples/pagination.md) for how to use this instance in a template.
+An instance of the `Paginator` class is returned from [`ctx.paginate`](#ctxpaginateitems-config). It contains a list of the items for the current page being rendered, as well as information on all the available pages to help build a pagination UI. See the [pagination example](./examples/pagination.html) for how to use this instance in a template.
 
 ---
 
@@ -175,7 +175,7 @@ A list of page objects for all the pages that will be generated for the current 
 ```
 
 ### The `output` object
-[Templates](./features.md#templates) within the `.templates` directory are rendered with an extra `output` variable that contains data for the base file that is applying the template. EJS files that aren't used as templates do not have an `output` object available.
+[Templates](./features.html#templates) within the `.templates` directory are rendered with an extra `output` variable that contains data for the base file that is applying the template. EJS files that aren't used as templates do not have an `output` object available.
 
 ---
 
