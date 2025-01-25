@@ -19,7 +19,11 @@ export class GlobalContext {
   public readonly alwaysBuildFiles: Set<string> = new Set();
   private fileContexts: Record<string, FileContext> = {};
 
-  constructor(inputFiles: InputFile[], public readonly options: GlobalContextOptions = {}) {
+  constructor(
+    public readonly inputDirectory: string,
+    inputFiles: InputFile[],
+    public readonly options: GlobalContextOptions = {}
+  ) {
     for (const inputFile of inputFiles) {
       this.inputFileMap[inputFile.path] = inputFile;
       this.dependencyGraph.addNode(inputFile.relativePath);
@@ -102,6 +106,11 @@ export class FileContext {
     }
 
     return { filename: parsedPath };
+  }
+
+  /** Input directory passed to phantomake(), used for EJS to set the root path for absolute includes. */
+  get _inputDirectory() {
+    return this.globalCtx.inputDirectory;
   }
 
   paginate<T>(items: T[], config?: Partial<PaginatorConfig>) {

@@ -128,7 +128,7 @@ export default async function phantomake(
   for (const path of inputPaths) {
     inputFiles.push(await InputFile.fromPath(inputDirectory, path));
   }
-  const globalContext = new GlobalContext(inputFiles, { baseUrl: options.baseUrl });
+  const globalContext = new GlobalContext(inputDirectory, inputFiles, { baseUrl: options.baseUrl });
   const templates = await Templates.fromInputFiles(globalContext, inputFiles);
 
   // Process input files into output

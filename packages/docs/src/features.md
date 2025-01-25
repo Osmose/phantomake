@@ -206,7 +206,7 @@ EJS has an `include` function that pulls the content of another file and embeds 
 </div>
 ```
 
-`include` paths are relative to the file being processed. It's recommended that include files are hidden with a `.` filename or in a dot-directory so that they aren't accidentally included in your output on their own.
+`include` paths are relative to the file being processed; absolute paths are relative to the source directory passed to `phantomake`. It's recommended that include files are hidden with a `.` filename or in a dot-directory so that they aren't accidentally included in your output on their own.
 
 > [!NOTE]
 > Included files don't have access to the same variables as the current file, such as the file context. You can use the second argument to `include` to pass needed variables instead.
