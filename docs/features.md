@@ -24,7 +24,7 @@ Phantomake transforms a source directory into an output directory by processing 
       <a href="#ejs">EJS</a>
       <ul class="subtoc">
         <li><a href="#file-context">File Context</a></li>
-        <li><a href="#includes">Includes</a></li>
+        <li><a href="#includes-1">Includes</a></li>
         <li><a href="#pagination">Pagination</a></li>
       </ul>
     </li>
