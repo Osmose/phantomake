@@ -19,7 +19,7 @@ export interface TextFileProcessor {
   defaultAttributes?: Partial<FrontMatterAttributes>;
   match(inputFile: InputFile): boolean;
   outputPath(inputFile: InputFile): string;
-  process(inputFile: InputFile, context: FileContext): Promise<string>;
+  process(inputFile: InputFile, context: FileContext, args?: Record<string, any>): Promise<string>;
 }
 
 /**

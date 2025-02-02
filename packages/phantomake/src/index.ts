@@ -5,24 +5,7 @@ import ejs from 'ejs';
 import { consola } from 'consola';
 import { InputFile } from './base';
 import { FileContext, GlobalContext } from './context';
-
-/** Recursively walk a directory tree and return the path of every individual file found. */
-async function walk(directory: string): Promise<string[]> {
-  const fileNames = await fs.readdir(directory);
-  const walkedDirectoryPromises = Promise.all(
-    fileNames.map(async (fileName) => {
-      const filePath = nodePath.join(directory, fileName);
-      const stat = await fs.lstat(filePath);
-      if (stat.isDirectory() && !stat.isSymbolicLink()) {
-        return walk(filePath);
-      }
-
-      return filePath;
-    })
-  );
-
-  return (await walkedDirectoryPromises).flat();
-}
+import { walk } from './util';
 
 interface Template {
   render: ejs.TemplateFunction;
@@ -35,7 +18,7 @@ class Templates {
   apply(templateName: string | null | undefined, data?: ejs.Data | undefined) {
     const template = this.templates[templateName ?? 'default'];
     if (!template) {
-      if (!templateName) {
+      if (!templateName || templateName === 'default') {
         throw new Error(
           'Markdown files without an explicit template require a default HTML template at .templates/default.ejs'
         );

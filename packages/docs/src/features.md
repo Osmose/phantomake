@@ -17,6 +17,7 @@ Phantomake transforms a source directory into an output directory by processing 
       <ul class="subtoc">
         <li><a href="#templates-1">Templates</a></li>
         <li><a href="#syntax-highlighting">Syntax Highlighting</a></li>
+        <li><a href="#includes">Includes</a></li>
       </ul>
     </li>
     <li>
@@ -157,6 +158,43 @@ Code fences output HTML that uses [highlight.js](https://highlightjs.org/)-compa
 ```
 
 The [highlight.js examples preview](https://highlightjs.org/examples) can help you find a theme that matches your site design.
+
+##### Includes
+
+Markdown files can use the `include` directive to pull the content of another file and embed it into the current file:
+
+```md
+# Section Header
+
+This paragraph includes an inline include :include{path="path/to/.include.md"}
+
+The next paragraph has a block-level include.
+
+::include{path="path/to/.include.md"}
+```
+
+Included Markdown files will also be transformed into HTML before being inserted. Templates are **not** applied to included Markdown files.
+
+You may pass extra arguments to the `include` directive, and EJS files may access these arguments as variables:
+
+<div class="code-block-with-filename">
+  <div class="filename">📄 /src/main.md</div>
+
+  ```md
+  The sum of 2 plus 2 is :include{path=".add.ejs" arg1=2 arg2=2}
+  ```
+</div>
+
+<div class="code-block-with-filename">
+  <div class="filename">📄 /src/.add.ejs</div>
+
+  ```erb
+  <%- Number.parseInt(arg1) + Number.parseInt(arg2) -%>
+  ```
+</div>
+
+> [!NOTE]
+> All arguments passed to EJS templates via `include` are strings.
 
 #### EJS
 

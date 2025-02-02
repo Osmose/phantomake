@@ -1,0 +1,24 @@
+// Bun Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Markdown Basic markdown 1`] = `
+{
+  "file.html": 
+"<h1 id="markdown-test-file"><a href="#markdown-test-file">Markdown Test file</a></h1>
+<p>Testing if markdown output is correct.</p>
+<ul>
+<li>Bulleted</li>
+<li>List</li>
+</ul>"
+,
+}
+`;
+
+exports[`Markdown Include block 1`] = `
+{
+  "main.html": 
+"<h1 id="heading"><a href="#heading">Heading</a></h1>
+<p>Paragraph</p>
+<p>The sum of 2 plus 2 is 4</p>"
+,
+}
+`;
