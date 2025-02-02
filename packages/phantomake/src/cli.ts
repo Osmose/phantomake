@@ -11,6 +11,7 @@ import send from 'send';
 import toml from 'toml';
 import consola from 'consola';
 import { DepGraph } from 'dependency-graph';
+import packageJson from '../package.json';
 
 import phantomake, { PhantomakeOptions } from './index';
 
@@ -21,7 +22,7 @@ interface CommonOptions {
 
 program
   .name('phantomake')
-  .version('0.1')
+  .version(packageJson.version)
   .description('A file-focused static site generator')
   .option('--base-url <url>', 'Base URL to use for absolute URLs')
   .option('-v, --verbose', 'Enable verbose logging', false)
