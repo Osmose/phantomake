@@ -16,9 +16,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./packages/docs/
     steps:
       - name: Setup bun
         uses: oven-sh/setup-bun@v1
@@ -31,13 +28,13 @@ jobs:
           bun install
       - name: Build docs
         run: |
-          bun run build
+          bun run docs-build
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './packages/docs/dist'
+          path: './docs-dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2

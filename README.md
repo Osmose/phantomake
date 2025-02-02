@@ -14,25 +14,15 @@ Phantomake is a static site generator with specific goals:
 - Can reuse common code (headers/footers/common HTML) across several pages with templates and includes
 - Can do pagination (e.g. for blog listings)
 
-Phantomake is available as a terminal command or the PhantoGUI app for desktop use.
-
-Phantomake is written in [TypeScript](https://www.typescriptlang.org/) and runs on [Bun](https://bun.sh/). PhantoGUI is built using [Tauri](https://tauri.app/).
+Phantomake is written in [TypeScript](https://www.typescriptlang.org/) and runs on [Bun](https://bun.sh/).
 
 ## Install
 
-Binaries and PhantoGUI installers for MacOS, Linux, and Windows are available from the [Releases](https://github.com/Osmose/phantomake/releases) page. Or, use the links below to fetch the latest builds:
+Binaries for MacOS, Linux, and Windows are available from the [Releases](https://github.com/Osmose/phantomake/releases) page. Or, use the links below to fetch the latest builds:
 
-- `phantomake` standalone binary
-  - [MacOS](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-macos.tar.gz)
-  - [Linux](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-linux.tar.gz)
-  - [Windows](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-windows.zip)
-- PhantoGUI
-  - [MacOS](https://github.com/Osmose/phantomake/releases/latest/download/PhantoGUI_0.1.0_universal.dmg)
-  - [Windows Installer](https://github.com/Osmose/phantomake/releases/latest/download/PhantoGUI_0.1.0_x64_en-US.msi)
-  - Linux
-    - [AppImage](https://github.com/Osmose/phantomake/releases/latest/download/phanto-gui_0.1.0_amd64.AppImage)
-    - [deb](https://github.com/Osmose/phantomake/releases/latest/download/phanto-gui_0.1.0_amd64.deb)
-    - [rpm](https://github.com/Osmose/phantomake/releases/latest/download/phanto-gui-0.1.0-1.x86_64.rpm)
+- [MacOS](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-macos.tar.gz)
+- [Linux](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-linux.tar.gz)
+- [Windows](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-windows.zip)
 
 If you have [Bun](https://bun.sh/) installed, you can also install Phantomake as a global package:
 

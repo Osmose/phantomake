@@ -8,9 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    defaults:
-      run:
-        working-directory: ./packages/phantomake/
     steps:
       - name: Setup bun
         uses: oven-sh/setup-bun@v2
@@ -28,18 +25,15 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: phantomake-linux
-          path: ./packages/phantomake/phantomake
+          path: ./phantomake
       - name: Upload binary to release
         uses: softprops/action-gh-release@v1
         with:
-          files: ./packages/phantomake/phantomake-linux.tar.gz
+          files: ./phantomake-linux.tar.gz
   build-binary-macos:
     runs-on: macos-latest
     permissions:
       contents: write
-    defaults:
-      run:
-        working-directory: ./packages/phantomake/
     steps:
       - name: Setup bun
         uses: oven-sh/setup-bun@v2
@@ -61,18 +55,15 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: phantomake-macos
-          path: ./packages/phantomake/phantomake
+          path: .//phantomake
       - name: Upload binary to release
         uses: softprops/action-gh-release@v1
         with:
-          files: ./packages/phantomake/phantomake-macos.tar.gz
+          files: .//phantomake-macos.tar.gz
   build-binary-windows:
     runs-on: windows-latest
     permissions:
       contents: write
-    defaults:
-      run:
-        working-directory: ./packages/phantomake/
     steps:
       - name: Setup bun
         uses: oven-sh/setup-bun@v2
@@ -90,11 +81,11 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: phantomake-windows.exe
-          path: ./packages/phantomake/phantomake.exe
+          path: .//phantomake.exe
       - name: Upload binary to release
         uses: softprops/action-gh-release@v1
         with:
-          files: ./packages/phantomake/phantomake-windows.zip
+          files: .//phantomake-windows.zip
   upload-source:
     runs-on: ubuntu-latest
     permissions:
@@ -104,92 +95,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Make source tarball
         run: |
-          git archive --format=tar.gz -o source.tar.gz --prefix=phantomake/ HEAD:packages/phantomake
+          git archive --format=tar.gz -o source.tar.gz --prefix=phantomake/ HEAD
       - name: Upload tarball to release
         uses: softprops/action-gh-release@v1
         with:
           files: source.tar.gz
-  publish-tauri:
-    needs: [build-binary-linux, build-binary-macos, build-binary-windows]
-    permissions:
-      contents: write
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - platform: 'macos-latest'
-            args: '--target universal-apple-darwin'
-            artifact-name: phantomake-macos
-          - platform: 'ubuntu-latest'
-            args: ''
-            artifact-name: phantomake-linux
-          - platform: 'windows-latest'
-            args: ''
-            artifact-name: phantomake-windows.exe
-
-    runs-on: ${{ matrix.platform }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
-
-      - name: Setup bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: install Rust stable
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
-
-      - name: Rust cache
-        uses: swatinem/rust-cache@v2
-        with:
-          workspaces: './packages/gui/src-tauri -> target'
-
-      - name: install frontend dependencies
-        working-directory: ./packages/gui/
-        run: bun install
-
-      - name: Download binary artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ matrix.artifact-name }}
-
-      - name: Copy Phantomake binary to tauri bin dir (Unix)
-        if: matrix.platform == 'ubuntu-latest'
-        run: |
-          chmod +x phantomake
-          mv phantomake ./packages/gui/src-tauri/bin/phantomake-$(rustc -Vv | grep host | cut -f2 -d' ')
-
-      - name: Copy Phantomake binary to tauri bin dir (MacOS)
-        if: matrix.platform == 'macos-latest'
-        run: |
-          chmod +x phantomake
-          mv phantomake ./packages/gui/src-tauri/bin/phantomake-universal-apple-darwin
-          cd ./packages/gui/src-tauri/bin
-          ln -s phantomake-universal-apple-darwin phantomake-aarch64-apple-darwin
-          ln -s phantomake-universal-apple-darwin phantomake-x86_64-apple-darwin
-          pwd
-          ls -l .
-
-      - name: Copy Phantomake binary to tauri bin dir (Windows)
-        if: matrix.platform == 'windows-latest'
-        run: |
-          Move-Item -Path phantomake.exe -Destination .\packages\gui\src-tauri\bin\phantomake-$(rustc -Vv | Select-String "host:" | ForEach-Object {$_.Line.split(" ")[1]}).exe
-
-      - uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tagName: ${{  github.ref_name }}
-          releaseName: ${{  github.ref_name }}
-          args: ${{ matrix.args }}
-          projectPath: ./packages/gui
-          tauriScript: bun tauri

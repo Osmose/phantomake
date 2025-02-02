@@ -335,10 +335,6 @@ figcaption {
   margin-top: 1em;
 }
 
-.phantogui-screenshot {
-  width: 100%;
-}
-
 /* Show wide nav for resolutions > 800px, narrow nav for < 800px. */
 
 .topbar-narrow-nav {

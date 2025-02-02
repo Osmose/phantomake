@@ -2,13 +2,6 @@
 title: Usage
 ---
 
-### How to run Phantomake
-
-There are two ways to run Phantomake:
-
-- If you are comfortable with using a terminal, use the [terminal command](#terminal-command).
-- If you don't want to use the terminal, then try [PhantoGUI](#phantogui).
-
 ### Terminal Command
 
 Phantomake is a terminal command. If you're unfamiliar with using a terminal, [MDN has a tutorial that can teach you the basics](https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Understanding_client-side_tools/Command_line).
@@ -35,14 +28,3 @@ The `watch` subcommand makes working on a Phantomake-generated site much more co
 # Watches `src` for changes and hosts the build output at http://localhost:8000
 phantomake watch ./src
 ```
-
-### PhantoGUI
-
-<img src="phantogui.png" class="phantogui-screenshot" alt="Screenshot of the user interface of PhantoGUI, showing the output of a preview server.">
-
-PhantoGUI allows you to run Phantomake without having to use the terminal. It includes:
-
-- A tab for launching and monitoring the **Watcher** preview of your output site.
-- A **Publish** tab for building and saving your output to a local directory.
-
-PhantoGUI runs on Linux, MacOS, or Windows and can be downloaded from the [Downloads](download.html) page.

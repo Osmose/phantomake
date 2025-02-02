@@ -169,3 +169,6 @@ dist
 .pnp.\*
 
 .DS_store
+
+docs-dist
+/phantomake
