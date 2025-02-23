@@ -44,7 +44,7 @@ const EJSProcessor: TextFileProcessor = {
     return ejs.render(
       inputFile.body,
       { ...args, ctx: context },
-      { filename: inputFile.path, includer: context._includer, root: context._inputDirectory }
+      { filename: inputFile.path, includer: context._includer, root: context._inputDirectory, async: true }
     );
   },
 };

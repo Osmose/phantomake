@@ -56,3 +56,11 @@ describe('Markdown', () => {
     '.templates/default.ejs': `<%- output.content %>`,
   });
 });
+
+describe('EJS', () => {
+  testInputFiles('ctx.renderMarkdown', {
+    'test.html.ejs': dedent`
+      <%- await ctx.renderMarkdown("# Heading"); %>
+    `,
+  });
+});

@@ -65,7 +65,6 @@ function ejsRemarkPlugin({ fileContext }: { fileContext?: FileContext }) {
     });
 
     for (const [directive, index, parent] of directiveReplacements) {
-      debugger;
       if (!directive.attributes?.path) {
         throw new Error(`include directives must specify a path attribute.`);
       }

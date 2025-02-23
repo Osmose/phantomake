@@ -22,3 +22,9 @@ exports[`Markdown Include block 1`] = `
 ,
 }
 `;
+
+exports[`EJS ctx.renderMarkdown 1`] = `
+{
+  "test.html": "<h1 id="heading"><a href="#heading">Heading</a></h1>",
+}
+`;
