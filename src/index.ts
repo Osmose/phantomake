@@ -61,7 +61,7 @@ interface Output {
   path: string;
 }
 
-async function renderOutput(inputFile: InputFile, globalContext: GlobalContext, templates: Templates): Promise<Output> {
+function renderOutput(inputFile: InputFile, globalContext: GlobalContext, templates: Templates): Output {
   const output = {
     content: inputFile.body ?? '',
     file: inputFile,
@@ -72,7 +72,7 @@ async function renderOutput(inputFile: InputFile, globalContext: GlobalContext, 
   // Apply the matching processor if one was found
   if (inputFile.processor) {
     output.path = inputFile.processor.outputPath(inputFile);
-    output.content = await inputFile.processor.process(inputFile, context);
+    output.content = inputFile.processor.process(inputFile, context);
   }
 
   // If a template was defined in the frontmatter, apply the processed content to it
@@ -131,14 +131,14 @@ export default async function phantomake(
     }
 
     if (inputFile.isText) {
-      const outputs = [await renderOutput(inputFile, globalContext, templates)];
+      const outputs = [renderOutput(inputFile, globalContext, templates)];
 
       // If a paginator was created, we have to output multiple files
       const paginator = globalContext.paginators[inputFile.path];
       if (paginator) {
         for (const page of paginator.pages) {
           paginator.currentPage = page.number;
-          const output = await renderOutput(inputFile, globalContext, templates);
+          const output = renderOutput(inputFile, globalContext, templates);
           output.path = page.outputPath;
           outputs.push(output);
         }

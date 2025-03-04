@@ -16,8 +16,8 @@ import { visit } from 'unist-util-visit';
 import { ContainerDirective, LeafDirective, TextDirective } from 'mdast-util-directive';
 import { FileContext } from './context';
 
-export default async function renderMarkdown(content: string, fileContext?: FileContext) {
-  const vFile = await unified()
+export default function renderMarkdown(content: string, fileContext?: FileContext) {
+  const vFile = unified()
     .use(remarkParse)
     .use(remarkGfm)
     // @ts-ignore Not sure why TS thinks this needs an array of booleans
@@ -34,14 +34,14 @@ export default async function renderMarkdown(content: string, fileContext?: File
     .use(rehypeAutolinkHeadings, { behavior: 'wrap' })
     .use(rehypeHighlight, { languages: all })
     .use(rehypeStringify, { allowDangerousHtml: true })
-    .process(content);
+    .processSync(content);
   return String(vFile);
 }
 
 type Directive = ContainerDirective | LeafDirective | TextDirective;
 
 function ejsRemarkPlugin({ fileContext }: { fileContext?: FileContext }) {
-  return async function (tree: Root, file: VFile) {
+  return function (tree: Root) {
     // Includes are not available if rendering a string with no file
     if (!fileContext) {
       return;
@@ -71,7 +71,7 @@ function ejsRemarkPlugin({ fileContext }: { fileContext?: FileContext }) {
 
       const { path, ...args } = directive.attributes;
       const absolutePath = nodePath.resolve(nodePath.dirname(fileContext.file.path), path);
-      const renderedInclude = await fileContext._include(absolutePath, args);
+      const renderedInclude = fileContext._include(absolutePath, args);
       parent.children.splice(index, 1, { type: 'html', value: renderedInclude });
     }
   };

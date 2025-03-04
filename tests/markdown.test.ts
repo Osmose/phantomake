@@ -60,7 +60,7 @@ describe('Markdown', () => {
 describe('EJS', () => {
   testInputFiles('ctx.renderMarkdown', {
     'test.html.ejs': dedent`
-      <%- await ctx.renderMarkdown("# Heading"); %>
+      <%- ctx.renderMarkdown("# Heading"); %>
     `,
   });
 });

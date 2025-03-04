@@ -18,7 +18,7 @@ const MarkdownProcessor: TextFileProcessor = {
     return nodePath.join(dir, `${name}.html`);
   },
 
-  async process(inputFile: InputFile, context: FileContext) {
+  process(inputFile: InputFile, context: FileContext) {
     if (inputFile.body === null) {
       throw new Error(`Input file ${inputFile.relativePath} is missing it's body.`);
     }
@@ -36,7 +36,7 @@ const EJSProcessor: TextFileProcessor = {
     return nodePath.join(dir, name); // Strip .ejs extension
   },
 
-  async process(inputFile: InputFile, context: FileContext, args?: Record<string, any>) {
+  process(inputFile: InputFile, context: FileContext, args?: Record<string, any>) {
     if (inputFile.body === null) {
       throw new Error(`Input file ${inputFile.relativePath} is missing it's body.`);
     }
@@ -44,7 +44,7 @@ const EJSProcessor: TextFileProcessor = {
     return ejs.render(
       inputFile.body,
       { ...args, ctx: context },
-      { filename: inputFile.path, includer: context._includer, root: context._inputDirectory, async: true }
+      { filename: inputFile.path, includer: context._includer, root: context._inputDirectory }
     );
   },
 };

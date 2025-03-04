@@ -114,7 +114,7 @@ export class FileContext {
   }
 
   /** Used by the Markdown processor for the `include` directive. */
-  async _include(path: string, args: Record<string, any>) {
+  _include(path: string, args: Record<string, any>) {
     const matchedPaths = globSync(path, { cwd: nodePath.dirname(this.file.path), absolute: true });
     if (matchedPaths.length > 1) {
       throw new Error(`Included file path "${path}" matches more than one file.`);
@@ -130,7 +130,7 @@ export class FileContext {
     }
 
     if (inputFile.processor) {
-      return await inputFile.processor.process(inputFile, this, args);
+      return inputFile.processor.process(inputFile, this, args);
     }
 
     return inputFile.body ?? '';

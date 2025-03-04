@@ -68,13 +68,6 @@ The maximum number of items for each page. Defaults to `5`.
 #### `ctx.renderMarkdown(content)`
 The `ctx.renderMarkdown()` method renders a string of Markdown into a string of HTML. It's useful when combined with the [`body`](#inputfilebody) attribute of an InputFile instance for a Markdown file.
 
->[!WARNING]
-> `ctx.renderMarkdown()` is an [async function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) and you must use the [await keyword](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) in front of it to properly output the string.
->
-> ```erb
-> <%- await ctx.renderMarkdown('# Heading') %>
-> ```
-
 ---
 
 #### `ctx.formatDate(dateString, template)`

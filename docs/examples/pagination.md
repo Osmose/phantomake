@@ -83,7 +83,7 @@ If you wanted the blog post listing to include the full blog posts instead of th
   ```erb
   <% for (const file of paginator.items) { %>
     <div class="blog-post">
-      <%- await ctx.renderMarkdown(file.body) %>
+      <%- ctx.renderMarkdown(file.body) %>
     </div>
   <% } %>
   ```
