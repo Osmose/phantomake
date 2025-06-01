@@ -137,7 +137,7 @@ export default async function phantomake(
       const paginator = globalContext.paginators[inputFile.path];
       if (paginator) {
         for (const page of paginator.pages) {
-          paginator.currentPage = page.number;
+          paginator.currentPageIndex = page.index;
           const output = renderOutput(inputFile, globalContext, templates);
           output.path = page.outputPath;
           outputs.push(output);

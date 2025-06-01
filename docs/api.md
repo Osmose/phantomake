@@ -10,6 +10,7 @@ title: API Reference
       <li><a href="#the-filecontext-class">FileContext</a></li>
       <li><a href="#the-inputfile-class">InputFile</a></li>
       <li><a href="#the-paginator-class">Paginator</a></li>
+      <li><a href="#the-page-class">Page</a></li>
       <li><a href="#the-output-object">output</a></li>
     </ul>
   </nav>
@@ -160,19 +161,45 @@ An array of items to be rendered on the current page. `paginator.items` is a sub
 ---
 
 #### `paginator.currentPage`
-The page number for the current page. Page numbers are 1-indexed, meaning the first page is 1 rather than 0, so as to be suitable for displaying in a template.
+The [`Page`](#the-page-class) object for the current page being rendered.
+
+---
+
+#### `paginator.nextPage`
+The [`Page`](#the-page-class) object for the page immediately following the current page. If the current page is the last page, this will return `null`.
+
+---
+
+#### `paginator.previousPage`
+The [`Page`](#the-page-class) object for the page immediately preceding the current page. If the current page is the first page, this will return `null`.
 
 ---
 
 #### `paginator.pages`
-A list of page objects for all the pages that will be generated for the current file. Pages are objects of the form:
+A list of [`Page`](#the-page-class) objects for all the pages that will be generated for the current file.
 
-```ts
-{
-  url: '/path/to/output2.html', // URL to the output file for this page
-  number: 2, // 1-indexed page number
-}
-```
+---
+
+#### `paginator.currentPageIndex`
+The 0-based index of the current page being rendered within the `paginator.pages` list.
+
+### The `Page` class
+`Page` objects are returned from the [`Paginator`](#the-paginator-class) class and represent a single page from the list of pages generated.
+
+---
+
+#### `page.url`
+The URL for the output file corresponding to this page.
+
+---
+
+#### `page.index`
+The 0-based index of this page in the `paginator.pages` list that it came from.
+
+---
+
+#### `page.number`
+The 1-based index of this page. This is equal to `page.index + 1` and is more suitable as the human-readable number to display to users for this page.
 
 ### The `output` object
 [Templates](./features.html#templates) within the `.templates` directory are rendered with an extra `output` variable that contains data for the base file that is applying the template. EJS files that aren't used as templates do not have an `output` object available.

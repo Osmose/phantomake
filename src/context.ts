@@ -207,16 +207,33 @@ export class FileContext {
   }
 }
 
-interface Page {
+class Page<T> {
   url: string;
   outputPath: string;
-  number: number;
+  index: number;
+
+  constructor(
+    private paginator: Paginator<T>,
+    { url, outputPath, index }: { url: string; outputPath: string; index: number }
+  ) {
+    this.url = url;
+    this.outputPath = outputPath;
+    this.index = index;
+  }
+
+  get number() {
+    return this.index + 1;
+  }
+
+  get isCurrentPage() {
+    return this.paginator.currentPageIndex === this.index;
+  }
 }
 
 class Paginator<T> {
   public readonly config: PaginatorConfig;
-  public readonly pages: Page[];
-  private _currentPage = 1; // 1-indexed page number
+  public readonly pages: Page<T>[];
+  private _currentPageIndex = 0; // 0-indexed page number
 
   constructor(private inputFile: InputFile, private readonly allItems: T[], config: Partial<PaginatorConfig> = {}) {
     this.config = {
@@ -231,29 +248,43 @@ class Paginator<T> {
     for (let k = 0; k < allItems.length; k += this.config.itemsPerPage) {
       const pageNumber = this.pages.length + 1;
       const outputPath = nodePath.join(dir, `${prefix}${pageNumber}${ext}`);
-      this.pages.push({
-        number: pageNumber,
-        url: '/' + outputPath.replace(nodePath.sep, '/').replace(/^[\.\/]/, ''),
-        outputPath,
-      });
+      this.pages.push(
+        new Page(this, {
+          index: this.pages.length,
+          url: '/' + outputPath.replace(nodePath.sep, '/').replace(/^[\.\/]/, ''),
+          outputPath,
+        })
+      );
     }
   }
 
-  set currentPage(page: number) {
-    if (page < 1 || page > this.pages.length) {
-      throw new Error(`Invalid page ${page}; the current page must be between 1-${this.pages.length}`);
+  set currentPageIndex(page: number) {
+    if (page < 0 || page >= this.pages.length) {
+      throw new Error(`Invalid page ${page}; the current page must be between 0-${this.pages.length - 1}`);
     }
 
-    this._currentPage = page;
+    this._currentPageIndex = page;
+  }
+
+  get currentPageIndex() {
+    return this._currentPageIndex;
   }
 
   get currentPage() {
-    return this._currentPage;
+    return this.pages[this._currentPageIndex] ?? null;
+  }
+
+  get nextPage() {
+    return this.pages[this._currentPageIndex + 1] ?? null;
+  }
+
+  get previousPage() {
+    return this.pages[this._currentPageIndex - 1] ?? null;
   }
 
   get items() {
     const { itemsPerPage } = this.config;
-    const start = (this.currentPage - 1) * itemsPerPage;
+    const start = this._currentPageIndex * itemsPerPage;
     return this.allItems.slice(start, start + itemsPerPage);
   }
 }

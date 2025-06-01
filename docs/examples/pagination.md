@@ -52,6 +52,8 @@ Since the blog index should be at `/blog`, create a file for it at `blog/index.h
 
 This will create a page at `/blog` that lists all of our blog posts in pages of 5 posts each, with links to each page at the bottom. If you add 5 more test posts, you will see a second page added to the listing.
 
+#### Sorting
+
 However, the order of the posts may be random. You can solve this by using the `date` field in each blog post and passing extra arguments to `ctx.getFiles` telling it to sort by date:
 
 <div class="code-block-with-filename">
@@ -75,6 +77,8 @@ However, the order of the posts may be random. You can solve this by using the `
 
 This causes `ctx.getFiles` to return your blog post files sorted by the `date` attribute in their YAML frontmatter, in descending (i.e. most recent first) order.
 
+#### Embedding Full Posts
+
 If you wanted the blog post listing to include the full blog posts instead of their descriptions, you could replace the description with the `ctx.renderMarkdown` helper and pass it the un-rendered Markdown of the post:
 
 <div class="code-block-with-filename">
@@ -88,3 +92,33 @@ If you wanted the blog post listing to include the full blog posts instead of th
   <% } %>
   ```
 </div>
+
+#### Page List Controls
+
+Paginators also expose info about the list of pages that can be used to create paginator controls that show links for all the pages generated:
+
+<div class="code-block-with-filename">
+  <div class="filename">📄 /src/blog/index.html.ejs</div>
+
+  ```erb
+  <ul>
+    <% if (paginator.previousPage) { -%>
+      <li><a href="<%- paginator.previousPage.url %>">Previous</a></li>
+    <% } -%>
+    <% for (const page of paginator.pages) { -%>
+      <li>
+        <% if (page.isCurrentPage) { -%>
+          <%- page.number %>
+        <% } else { -%>
+          <a href="<%- page.url %>"><%- page.number %></a>
+        <% } -%>
+      </li>
+    <% } -%>
+    <% if (paginator.nextPage) { -%>
+      <li><a href="<%- paginator.nextPage.url %>">Next</a></li>
+    <% } -%>
+  </ul>
+  ```
+</div>
+
+This will output a list with Next and Previous links (if there is a next or previous page for the current page), as well as a link for every page. The page the user is currently viewing will not have a link and will only display the page number.

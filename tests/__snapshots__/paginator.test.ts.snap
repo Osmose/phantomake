@@ -1,0 +1,136 @@
+// Bun Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Paginator Rendering items per-page 1`] = `
+{
+  "page.html": 
+"<h1>Pagination</h1>
+  <div>1</div>
+  <div>2</div>
+  <div>3</div>
+"
+,
+  "page1.html": 
+"<h1>Pagination</h1>
+  <div>1</div>
+  <div>2</div>
+  <div>3</div>
+"
+,
+  "page2.html": 
+"<h1>Pagination</h1>
+  <div>4</div>
+  <div>5</div>
+  <div>6</div>
+"
+,
+  "page3.html": 
+"<h1>Pagination</h1>
+  <div>7</div>
+  <div>8</div>
+  <div>9</div>
+"
+,
+  "page4.html": 
+"<h1>Pagination</h1>
+  <div>10</div>
+"
+,
+}
+`;
+
+exports[`Paginator Rendering a pagination control 1`] = `
+{
+  "page.html": 
+"<h1>Pagination</h1>
+<ul>
+        <li>
+              1
+          </li>
+      <li>
+              <a href="/page2.html">2</a>
+          </li>
+      <li>
+              <a href="/page3.html">3</a>
+          </li>
+      <li>
+              <a href="/page4.html">4</a>
+          </li>
+        <li><a href="/page2.html">Next</a></li>
+  </ul>"
+,
+  "page1.html": 
+"<h1>Pagination</h1>
+<ul>
+        <li>
+              1
+          </li>
+      <li>
+              <a href="/page2.html">2</a>
+          </li>
+      <li>
+              <a href="/page3.html">3</a>
+          </li>
+      <li>
+              <a href="/page4.html">4</a>
+          </li>
+        <li><a href="/page2.html">Next</a></li>
+  </ul>"
+,
+  "page2.html": 
+"<h1>Pagination</h1>
+<ul>
+      <li><a href="/page1.html">Prev</a></li>
+        <li>
+              <a href="/page1.html">1</a>
+          </li>
+      <li>
+              2
+          </li>
+      <li>
+              <a href="/page3.html">3</a>
+          </li>
+      <li>
+              <a href="/page4.html">4</a>
+          </li>
+        <li><a href="/page3.html">Next</a></li>
+  </ul>"
+,
+  "page3.html": 
+"<h1>Pagination</h1>
+<ul>
+      <li><a href="/page2.html">Prev</a></li>
+        <li>
+              <a href="/page1.html">1</a>
+          </li>
+      <li>
+              <a href="/page2.html">2</a>
+          </li>
+      <li>
+              3
+          </li>
+      <li>
+              <a href="/page4.html">4</a>
+          </li>
+        <li><a href="/page4.html">Next</a></li>
+  </ul>"
+,
+  "page4.html": 
+"<h1>Pagination</h1>
+<ul>
+      <li><a href="/page3.html">Prev</a></li>
+        <li>
+              <a href="/page1.html">1</a>
+          </li>
+      <li>
+              <a href="/page2.html">2</a>
+          </li>
+      <li>
+              <a href="/page3.html">3</a>
+          </li>
+      <li>
+              4
+          </li>
+    </ul>"
+,
+}
+`;
