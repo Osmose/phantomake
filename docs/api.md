@@ -201,6 +201,11 @@ The 0-based index of this page in the `paginator.pages` list that it came from.
 #### `page.number`
 The 1-based index of this page. This is equal to `page.index + 1` and is more suitable as the human-readable number to display to users for this page.
 
+---
+
+#### `page.isCurrentPage`
+Returns `true` if this page is the page currently being rendered, and `false` otherwise.
+
 ### The `output` object
 [Templates](./features.html#templates) within the `.templates` directory are rendered with an extra `output` variable that contains data for the base file that is applying the template. EJS files that aren't used as templates do not have an `output` object available.
 
