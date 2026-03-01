@@ -70,8 +70,7 @@ function ejsRemarkPlugin({ fileContext }: { fileContext?: FileContext }) {
       }
 
       const { path, ...args } = directive.attributes;
-      const absolutePath = nodePath.resolve(nodePath.dirname(fileContext.file.path), path);
-      const renderedInclude = fileContext._include(absolutePath, args);
+      const renderedInclude = fileContext._include(path, args);
       parent.children.splice(index, 1, { type: 'html', value: renderedInclude });
     }
   };

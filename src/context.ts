@@ -115,19 +115,25 @@ export class FileContext {
 
   /** Used by the Markdown processor for the `include` directive. */
   _include(path: string, args: Record<string, any>) {
-    const matchedPaths = globSync(path, { cwd: nodePath.dirname(this.file.path), absolute: true });
+    const matchedPaths = globSync(path, {
+      cwd: nodePath.dirname(this.file.path),
+      absolute: true,
+      root: this._inputDirectory,
+    });
     if (matchedPaths.length > 1) {
       throw new Error(`Included file path "${path}" matches more than one file.`);
     } else if (matchedPaths.length < 1) {
       throw new Error(`Included file path "${path}" could not be found.`);
     }
 
-    const inputFile = this.globalCtx.inputFileMap[path];
+    const matchedPath = matchedPaths[0];
+    const inputFile = this.globalCtx.inputFileMap[matchedPath];
     if (!inputFile) {
-      throw new Error(`Included file "${path}" must be within the source directory passed to phantomake.`);
+      throw new Error(`Included file "${matchedPath}" must be within the source directory passed to phantomake.`);
     } else if (!inputFile.isText) {
-      throw new Error(`Included file "${path}" must be a text file.`);
+      throw new Error(`Included file "${matchedPath}" must be a text file.`);
     }
+    this.globalCtx.addDependency(this.file, inputFile);
 
     if (inputFile.processor) {
       return inputFile.processor.process(inputFile, this, args);

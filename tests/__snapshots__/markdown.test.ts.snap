@@ -28,3 +28,12 @@ exports[`EJS ctx.renderMarkdown 1`] = `
   "test.html": "<h1 id="heading"><a href="#heading">Heading</a></h1>",
 }
 `;
+
+exports[`Markdown Absolute include path 1`] = `
+{
+  "main.html": 
+"<h1 id="heading"><a href="#heading">Heading</a></h1>
+<p>Paragraph</p>"
+,
+}
+`;

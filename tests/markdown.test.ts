@@ -29,6 +29,18 @@ describe('Markdown', () => {
     '.add.ejs': dedent`<%- Number.parseInt(arg1) + Number.parseInt(arg2) -%>`,
     '.templates/default.ejs': `<%- output.content %>`,
   });
+
+  testInputFiles('Absolute include path', {
+    'main.md': dedent`
+      ::include{path=/.markdown_include.md}
+    `,
+    '.markdown_include.md': dedent`
+      # Heading
+
+      Paragraph
+    `,
+    '.templates/default.ejs': `<%- output.content %>`,
+  });
 });
 
 describe('EJS', () => {
