@@ -31,6 +31,13 @@ The `file` property is an [InputFile](#inputfile) instance for the EJS file bein
 
 ---
 
+#### `ctx.getFile(path)`
+The `ctx.getFile()` method finds a single file by its path. Paths are treated as relative to the EJS file being processed; absolute paths are relative to the source directory passed to Phantomake.
+
+The returned value is an [InputFile](#inputfile) instance for the specified file. If no file matching the given path is found, `getFile` returns `null`.
+
+---
+
 #### `ctx.getFiles(pattern, options?)`
 The `ctx.getFiles()` method searches for files matching a [glob pattern](https://www.digitalocean.com/community/tools/glob) and returns a list of [InputFile](#inputfile) instances for the matched files. Patterns are treated as relative to the EJS file being processed.
 

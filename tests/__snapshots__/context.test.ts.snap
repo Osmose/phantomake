@@ -1,5 +1,44 @@
 // Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
+exports[`Context getFile matches a single file via filename 1`] = `
+{
+  "otherfile.html": "<div>Other</div>",
+  "page.html": 
+"<h1>Page</h1>
+<p><div>Other</div></p>"
+,
+}
+`;
+
+exports[`Context getFile supports absolute paths 1`] = `
+{
+  "child/directory/page.html": 
+"<h1>Page</h1>
+<p><div>Other</div></p>"
+,
+  "otherfile.html": "<div>Other</div>",
+}
+`;
+
+exports[`Context getFile returns null if the file does not exist 1`] = `
+{
+  "child/directory/page.html": 
+"<h1>Page</h1>
+<p>true</p>"
+,
+}
+`;
+
+exports[`Context readJson can read JSON from a file 1`] = `
+{
+  "data.json": "{"foo": "bar"}",
+  "page.html": 
+"<h1>Page</h1>
+<p>bar</p>"
+,
+}
+`;
+
 exports[`Context getFiles matches files via glob syntax 1`] = `
 {
   "children/child1.html": "<div>Child 1</div>",
@@ -7,9 +46,9 @@ exports[`Context getFiles matches files via glob syntax 1`] = `
   "children/child3.txt": "Child 3",
   "page.html": 
 "
-  <a href="/children/child2.html">&lt;div&gt;Child 2&lt;/div&gt;</a>
+  <a href="/children/child2.html"><div>Child 2</div></a>
 
-  <a href="/children/child1.html">&lt;div&gt;Child 1&lt;/div&gt;</a>
+  <a href="/children/child1.html"><div>Child 1</div></a>
 "
 ,
 }
@@ -22,11 +61,11 @@ exports[`Context getFiles accepts multiple glob patterns 1`] = `
   "children2/child3.html": "<div>Child 3</div>",
   "page.html": 
 "
-  <a href="/children/child2.html">&lt;div&gt;Child 2&lt;/div&gt;</a>
+  <a href="/children/child2.html"><div>Child 2</div></a>
 
-  <a href="/children/child1.html">&lt;div&gt;Child 1&lt;/div&gt;</a>
+  <a href="/children/child1.html"><div>Child 1</div></a>
 
-  <a href="/children2/child3.html">&lt;div&gt;Child 3&lt;/div&gt;</a>
+  <a href="/children2/child3.html"><div>Child 3</div></a>
 "
 ,
 }

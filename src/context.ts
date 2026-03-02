@@ -22,7 +22,7 @@ export class GlobalContext {
   constructor(
     public readonly inputDirectory: string,
     inputFiles: InputFile[],
-    public readonly options: GlobalContextOptions = {}
+    public readonly options: GlobalContextOptions = {},
   ) {
     for (const inputFile of inputFiles) {
       this.inputFileMap[inputFile.path] = inputFile;
@@ -62,12 +62,30 @@ interface GetFilesOptions {
 
 /** Contains data about the file currently being rendered, as well as utility functions for EJS. */
 export class FileContext {
-  constructor(private globalCtx: GlobalContext, public readonly file: InputFile) {
+  constructor(
+    private globalCtx: GlobalContext,
+    public readonly file: InputFile,
+  ) {
     // Bind so that we can pass this as around as a function argument
     this._includer = this._includer.bind(this);
   }
 
-  getFiles(pattern: string, options: GetFilesOptions = {}) {
+  getFile(path: string) {
+    let resolvedPath = nodePath.resolve(this.file.path, '..', path);
+    if (nodePath.isAbsolute(path)) {
+      resolvedPath = nodePath.join(this._inputDirectory, path);
+    }
+
+    // Store dependency
+    const inputFile = this.globalCtx.inputFileMap[resolvedPath];
+    if (inputFile) {
+      this.globalCtx.addDependency(this.file, inputFile);
+    }
+
+    return inputFile ?? null;
+  }
+
+  getFiles(pattern: string | string[], options: GetFilesOptions = {}) {
     const paths = globSync(pattern, { cwd: nodePath.dirname(this.file.path), absolute: true });
     let files = paths.map((path) => this.globalCtx.inputFileMap[path]).filter((file) => file);
 
@@ -177,15 +195,12 @@ export class FileContext {
   }
 
   readJson(path: string) {
-    const resolvedPath = nodePath.resolve(this.file.path, '..', path);
-
-    // Store dependency
-    const jsonInputFile = this.globalCtx.inputFileMap[resolvedPath];
-    if (jsonInputFile) {
-      this.globalCtx.addDependency(this.file, jsonInputFile);
+    const inputFile = this.getFile(path);
+    if (inputFile === null) {
+      throw new Error(`Could not find file "${path}" within the source directory.`);
     }
 
-    const file = fs.readFileSync(resolvedPath, { encoding: 'utf-8' });
+    const file = fs.readFileSync(inputFile.path, { encoding: 'utf-8' });
     return JSON.parse(file);
   }
 
@@ -220,7 +235,7 @@ class Page<T> {
 
   constructor(
     private paginator: Paginator<T>,
-    { url, outputPath, index }: { url: string; outputPath: string; index: number }
+    { url, outputPath, index }: { url: string; outputPath: string; index: number },
   ) {
     this.url = url;
     this.outputPath = outputPath;
@@ -241,7 +256,11 @@ class Paginator<T> {
   public readonly pages: Page<T>[];
   private _currentPageIndex = 0; // 0-indexed page number
 
-  constructor(private inputFile: InputFile, private readonly allItems: T[], config: Partial<PaginatorConfig> = {}) {
+  constructor(
+    private inputFile: InputFile,
+    private readonly allItems: T[],
+    config: Partial<PaginatorConfig> = {},
+  ) {
     this.config = {
       itemsPerPage: 5,
       ...config,
@@ -259,7 +278,7 @@ class Paginator<T> {
           index: this.pages.length,
           url: '/' + outputPath.replace(nodePath.sep, '/').replace(/^[\.\/]/, ''),
           outputPath,
-        })
+        }),
       );
     }
   }
