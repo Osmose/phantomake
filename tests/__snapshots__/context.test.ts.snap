@@ -1,0 +1,33 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`Context getFiles matches files via glob syntax 1`] = `
+{
+  "children/child1.html": "<div>Child 1</div>",
+  "children/child2.html": "<div>Child 2</div>",
+  "children/child3.txt": "Child 3",
+  "page.html": 
+"
+  <a href="/children/child2.html">&lt;div&gt;Child 2&lt;/div&gt;</a>
+
+  <a href="/children/child1.html">&lt;div&gt;Child 1&lt;/div&gt;</a>
+"
+,
+}
+`;
+
+exports[`Context getFiles accepts multiple glob patterns 1`] = `
+{
+  "children/child1.html": "<div>Child 1</div>",
+  "children/child2.html": "<div>Child 2</div>",
+  "children2/child3.html": "<div>Child 3</div>",
+  "page.html": 
+"
+  <a href="/children/child2.html">&lt;div&gt;Child 2&lt;/div&gt;</a>
+
+  <a href="/children/child1.html">&lt;div&gt;Child 1&lt;/div&gt;</a>
+
+  <a href="/children2/child3.html">&lt;div&gt;Child 3&lt;/div&gt;</a>
+"
+,
+}
+`;

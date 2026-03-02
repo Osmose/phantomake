@@ -34,6 +34,8 @@ The `file` property is an [InputFile](#inputfile) instance for the EJS file bein
 #### `ctx.getFiles(pattern, options?)`
 The `ctx.getFiles()` method searches for files matching a [glob pattern](https://www.digitalocean.com/community/tools/glob) and returns a list of [InputFile](#inputfile) instances for the matched files. Patterns are treated as relative to the EJS file being processed.
 
+`pattern` can either be a string with a single glob pattern, or a list of multiple patterns to search for.
+
 ##### `options.sort?`
 If `options.sort` is provided, the list matched files will be sorted by an attribute from their YAML frontmatter. This can be used to sort files by a title or date field. `options.sort` is an object that looks like:
 
