@@ -1,12 +1,12 @@
 {
   "name": "phantomake",
   "description": "A file-focused static site generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "ISC",
   "module": "src/index.ts",
   "bin": "./src/cli.ts",
   "engines": {
-    "node": "^25.8.1"
+    "node": ">=25.8.1"
   },
   "type": "module",
   "scripts": {
