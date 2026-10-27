@@ -1,0 +1,23 @@
+exports[`EJS > ctx.renderMarkdown 1`] = `
+{
+  "test.html": "<h1 id=\\"heading\\"><a href=\\"#heading\\">Heading</a></h1>"
+}
+`;
+
+exports[`Markdown > Absolute include path 1`] = `
+{
+  "main.html": "<h1 id=\\"heading\\"><a href=\\"#heading\\">Heading</a></h1>\\n<p>Paragraph</p>"
+}
+`;
+
+exports[`Markdown > Basic markdown 1`] = `
+{
+  "file.html": "<h1 id=\\"markdown-test-file\\"><a href=\\"#markdown-test-file\\">Markdown Test file</a></h1>\\n<p>Testing if markdown output is correct.</p>\\n<ul>\\n<li>Bulleted</li>\\n<li>List</li>\\n</ul>"
+}
+`;
+
+exports[`Markdown > Include block 1`] = `
+{
+  "main.html": "<h1 id=\\"heading\\"><a href=\\"#heading\\">Heading</a></h1>\\n<p>Paragraph</p>\\n<p>The sum of 2 plus 2 is 4</p>"
+}
+`;

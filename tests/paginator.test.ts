@@ -1,6 +1,6 @@
 import dedent from 'dedent';
-import { describe } from 'bun:test';
-import { testInputFiles } from './utils';
+import { describe } from 'node:test';
+import { testInputFiles } from './utils.ts';
 
 describe('Paginator', () => {
   testInputFiles('Rendering items per-page', {

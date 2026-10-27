@@ -17,18 +17,18 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Setup bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup node
+        uses: actions/setup-node@v7
         with:
-          bun-version: latest
+          node-version: latest
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Bun install
+      - name: NPM install
         run: |
-          bun install
+          npm install
       - name: Build docs
         run: |
-          bun run docs-build
+          npm run docs-build
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

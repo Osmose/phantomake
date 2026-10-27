@@ -6,17 +6,21 @@
   "module": "src/index.ts",
   "bin": "./src/cli.ts",
   "engines": {
-    "bun": "^1.0.13"
+    "node": "^25.8.1"
   },
   "type": "module",
   "scripts": {
-    "cli": "bun run src/cli.ts",
-    "build": "rm -rf node_modules/fsevents && bun build src/cli.ts --compile --minify --outfile=phantomake",
-    "docs-build": "bun run src/cli.ts docs docs-dist",
-    "docs-watch": "bun run src/cli.ts watch docs"
+    "cli": "node src/cli.ts",
+    "bundle": "rolldown -c rolldown.config.js",
+    "build-win": "node --build-sea sea-config-win.json",
+    "build-nix": "node --build-sea sea-config.json",
+    "docs-build": "node src/cli.ts docs docs-dist",
+    "docs-watch": "node src/cli.ts watch docs",
+    "test": "node --test"
   },
   "dependencies": {
     "@types/ejs": "^3.1.5",
+    "@types/mdast": "^4.0.4",
     "chokidar": "^3.5.3",
     "commander": "^11.1.0",
     "consola": "^3.2.3",
@@ -50,7 +54,7 @@
     "@types/lodash": "^4.14.202",
     "@types/send": "^0.17.4",
     "@types/serve-static": "^1.15.5",
-    "bun-types": "latest",
-    "dedent": "^1.5.3"
+    "dedent": "^1.5.3",
+    "rolldown": "^1.2.15"
   }
 }

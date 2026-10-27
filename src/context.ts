@@ -4,7 +4,7 @@ import type { InputFile } from './base';
 import dayjs from 'dayjs';
 import { globSync } from 'glob';
 import _ from 'lodash';
-import renderMarkdown from './markdown';
+import renderMarkdown from './markdown.ts';
 import { DepGraph } from 'dependency-graph';
 
 interface GlobalContextOptions {
@@ -18,12 +18,13 @@ export class GlobalContext {
   public readonly dependencyGraph: DepGraph<string> = new DepGraph();
   public readonly alwaysBuildFiles: Set<string> = new Set();
   private fileContexts: Record<string, FileContext> = {};
+  public readonly inputDirectory: string;
+  public readonly options: GlobalContextOptions = {};
 
-  constructor(
-    public readonly inputDirectory: string,
-    inputFiles: InputFile[],
-    public readonly options: GlobalContextOptions = {},
-  ) {
+  constructor(inputDirectory: string, inputFiles: InputFile[], options: GlobalContextOptions = {}) {
+    this.inputDirectory = inputDirectory;
+    this.options = options;
+
     for (const inputFile of inputFiles) {
       this.inputFileMap[inputFile.path] = inputFile;
       this.dependencyGraph.addNode(inputFile.relativePath);
@@ -62,10 +63,13 @@ interface GetFilesOptions {
 
 /** Contains data about the file currently being rendered, as well as utility functions for EJS. */
 export class FileContext {
-  constructor(
-    private globalCtx: GlobalContext,
-    public readonly file: InputFile,
-  ) {
+  private globalCtx: GlobalContext;
+  public readonly file: InputFile;
+
+  constructor(globalCtx: GlobalContext, file: InputFile) {
+    this.globalCtx = globalCtx;
+    this.file = file;
+
     // Bind so that we can pass this as around as a function argument
     this._includer = this._includer.bind(this);
   }
@@ -232,11 +236,10 @@ class Page<T> {
   url: string;
   outputPath: string;
   index: number;
+  private paginator: Paginator<T>;
 
-  constructor(
-    private paginator: Paginator<T>,
-    { url, outputPath, index }: { url: string; outputPath: string; index: number },
-  ) {
+  constructor(paginator: Paginator<T>, { url, outputPath, index }: { url: string; outputPath: string; index: number }) {
+    this.paginator = paginator;
     this.url = url;
     this.outputPath = outputPath;
     this.index = index;
@@ -255,12 +258,12 @@ class Paginator<T> {
   public readonly config: PaginatorConfig;
   public readonly pages: Page<T>[];
   private _currentPageIndex = 0; // 0-indexed page number
+  private inputFile: InputFile;
+  private readonly allItems: T[];
 
-  constructor(
-    private inputFile: InputFile,
-    private readonly allItems: T[],
-    config: Partial<PaginatorConfig> = {},
-  ) {
+  constructor(inputFile: InputFile, allItems: T[], config: Partial<PaginatorConfig> = {}) {
+    this.inputFile = inputFile;
+    this.allItems = allItems;
     this.config = {
       itemsPerPage: 5,
       ...config,

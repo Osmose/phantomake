@@ -9,18 +9,19 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Setup bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup node
+        uses: actions/setup-node@v7
         with:
-          bun-version: latest
+          node-version: latest
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Bun install
+      - name: npm install
         run: |
-          bun install
+          npm install
       - name: Build phantomake
         run: |
-          bun run build
+          npm run bundle
+          npm run build-nix
           tar -zcvf phantomake-linux.tar.gz phantomake
       - uses: actions/upload-artifact@v4
         with:
@@ -35,22 +36,19 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Setup bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup node
+        uses: actions/setup-node@v7
         with:
-          bun-version: latest
+          node-version: latest
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Bun install
+      - name: npm install
         run: |
-          bun install
+          npm install
       - name: Build phantomake
         run: |
-          # Manually call compile because we need to make a universal binary
-          rm -rf node_modules/fsevents
-          bun build src/cli.ts --compile --minify --target=bun-darwin-arm64 --outfile=phantomake-arm64
-          bun build src/cli.ts --compile --minify --target=bun-darwin-x64 --outfile=phantomake-x64
-          lipo -create -output phantomake phantomake-arm64 phantomake-x64
+          npm run bundle
+          npm run build-nix
           tar -zcvf phantomake-macos.tar.gz phantomake
       - uses: actions/upload-artifact@v4
         with:
@@ -65,18 +63,19 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Setup bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup node
+        uses: actions/setup-node@v7
         with:
-          bun-version: latest
+          node-version: latest
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Bun install
+      - name: npm install
         run: |
-          bun install
+          npm install
       - name: Build phantomake (Windows)
         run: |
-          bun run build
+          npm run bundle
+          npm run build-win
           Compress-Archive -Path phantomake.exe -Destination phantomake-windows.zip
       - uses: actions/upload-artifact@v4
         with:

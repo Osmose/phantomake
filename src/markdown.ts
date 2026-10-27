@@ -1,4 +1,3 @@
-import * as nodePath from 'node:path';
 import rehypeStringify from 'rehype-stringify';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
@@ -10,11 +9,10 @@ import rehypeSlug from 'rehype-slug';
 import admonitionPlugin from 'remark-github-beta-blockquote-admonitions';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import remarkDirective from 'remark-directive';
-import { Root, Parent } from 'mdast';
-import { VFile } from 'vfile';
+import type { Root, Parent } from 'mdast';
 import { visit } from 'unist-util-visit';
-import { ContainerDirective, LeafDirective, TextDirective } from 'mdast-util-directive';
-import { FileContext } from './context';
+import type { ContainerDirective, LeafDirective, TextDirective } from 'mdast-util-directive';
+import { FileContext } from './context.ts';
 
 export default function renderMarkdown(content: string, fileContext?: FileContext) {
   const vFile = unified()

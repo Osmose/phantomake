@@ -1,0 +1,19 @@
+exports[`Paginator > Rendering a pagination control 1`] = `
+{
+  "page.html": "<h1>Pagination</h1>\\n<ul>\\n        <li>\\n              1\\n          </li>\\n      <li>\\n              <a href=\\"/page2.html\\">2</a>\\n          </li>\\n      <li>\\n              <a href=\\"/page3.html\\">3</a>\\n          </li>\\n      <li>\\n              <a href=\\"/page4.html\\">4</a>\\n          </li>\\n        <li><a href=\\"/page2.html\\">Next</a></li>\\n  </ul>",
+  "page1.html": "<h1>Pagination</h1>\\n<ul>\\n        <li>\\n              1\\n          </li>\\n      <li>\\n              <a href=\\"/page2.html\\">2</a>\\n          </li>\\n      <li>\\n              <a href=\\"/page3.html\\">3</a>\\n          </li>\\n      <li>\\n              <a href=\\"/page4.html\\">4</a>\\n          </li>\\n        <li><a href=\\"/page2.html\\">Next</a></li>\\n  </ul>",
+  "page2.html": "<h1>Pagination</h1>\\n<ul>\\n      <li><a href=\\"/page1.html\\">Prev</a></li>\\n        <li>\\n              <a href=\\"/page1.html\\">1</a>\\n          </li>\\n      <li>\\n              2\\n          </li>\\n      <li>\\n              <a href=\\"/page3.html\\">3</a>\\n          </li>\\n      <li>\\n              <a href=\\"/page4.html\\">4</a>\\n          </li>\\n        <li><a href=\\"/page3.html\\">Next</a></li>\\n  </ul>",
+  "page3.html": "<h1>Pagination</h1>\\n<ul>\\n      <li><a href=\\"/page2.html\\">Prev</a></li>\\n        <li>\\n              <a href=\\"/page1.html\\">1</a>\\n          </li>\\n      <li>\\n              <a href=\\"/page2.html\\">2</a>\\n          </li>\\n      <li>\\n              3\\n          </li>\\n      <li>\\n              <a href=\\"/page4.html\\">4</a>\\n          </li>\\n        <li><a href=\\"/page4.html\\">Next</a></li>\\n  </ul>",
+  "page4.html": "<h1>Pagination</h1>\\n<ul>\\n      <li><a href=\\"/page3.html\\">Prev</a></li>\\n        <li>\\n              <a href=\\"/page1.html\\">1</a>\\n          </li>\\n      <li>\\n              <a href=\\"/page2.html\\">2</a>\\n          </li>\\n      <li>\\n              <a href=\\"/page3.html\\">3</a>\\n          </li>\\n      <li>\\n              4\\n          </li>\\n    </ul>"
+}
+`;
+
+exports[`Paginator > Rendering items per-page 1`] = `
+{
+  "page.html": "<h1>Pagination</h1>\\n  <div>1</div>\\n  <div>2</div>\\n  <div>3</div>\\n",
+  "page1.html": "<h1>Pagination</h1>\\n  <div>1</div>\\n  <div>2</div>\\n  <div>3</div>\\n",
+  "page2.html": "<h1>Pagination</h1>\\n  <div>4</div>\\n  <div>5</div>\\n  <div>6</div>\\n",
+  "page3.html": "<h1>Pagination</h1>\\n  <div>7</div>\\n  <div>8</div>\\n  <div>9</div>\\n",
+  "page4.html": "<h1>Pagination</h1>\\n  <div>10</div>\\n"
+}
+`;

@@ -82,11 +82,11 @@ phantomake watch src
 
 The HTML page above should be available at http://localhost:8000 in your web browser.
 
-Alternatively, if you have [Bun](https://bun.sh/) installed, you can install Phantomake as a dependency and use the helper scripts from the `package.json` file:
+Alternatively, if you have [NPM](https://www.npmjs.com/) installed, you can install Phantomake as a dependency and use the helper scripts from the `package.json` file:
 
 ```sh
-bun install
-bun watch
+npm install
+npm run watch
 ```
 
 In watch mode, Phantomake will rebuild your website if any files in the source directory change, which is very useful for quickly previewing changes to your website.
@@ -118,18 +118,18 @@ The last step before deploying your webpage is to tell Github Actions how to bui
         url: ${{ steps.deployment.outputs.page_url }}
       runs-on: ubuntu-latest
       steps:
-        - name: Setup bun
-          uses: oven-sh/setup-bun@v1
+        - name: Setup node
+          uses: actions/setup-node@v7
           with:
-            bun-version: latest
+            node-version: latest
         - name: Check out repository code
           uses: actions/checkout@v4
-        - name: Bun install
+        - name: NPM install
           run: |
-            bun install
+            npm install
         - name: Build site
           run: |
-            bun phantomake
+            npm run phantomake
         - name: Setup Pages
           uses: actions/configure-pages@v3
         - name: Upload artifact

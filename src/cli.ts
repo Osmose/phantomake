@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 import * as nodePath from 'node:path';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
@@ -11,9 +11,10 @@ import send from 'send';
 import toml from 'toml';
 import consola from 'consola';
 import { DepGraph } from 'dependency-graph';
-import packageJson from '../package.json';
+import packageJson from '../package.json' with { type: 'json' };
 
-import phantomake, { PhantomakeOptions } from './index';
+import phantomake from './index.ts';
+import type { PhantomakeOptions } from './index.ts';
 
 interface CommonOptions {
   baseUrl?: string;
@@ -35,15 +36,20 @@ program
 
 async function makePhantomakeOptions(
   inputDirectory: string | null,
-  options?: Partial<PhantomakeOptions>
+  options?: Partial<PhantomakeOptions>,
 ): Promise<PhantomakeOptions> {
   const programOptions: CommonOptions = program.opts();
 
   let projectConfig = {};
   if (inputDirectory) {
-    const configFile = Bun.file(nodePath.join(inputDirectory, '.phantomake.toml'));
-    if (await configFile.exists()) {
-      projectConfig = toml.parse(await configFile.text());
+    const configFilePath = nodePath.join(inputDirectory, '.phantomake.toml');
+    try {
+      const configFile = await fs.readFile(configFilePath);
+      projectConfig = toml.parse(configFile.toString('utf8'));
+    } catch (err) {
+      if ((err as ErrnoException).code !== 'ENOENT') {
+        throw err;
+      }
     }
   }
 
@@ -82,7 +88,7 @@ program
     phantomake(
       nodePath.resolve(inputDirectory),
       nodePath.resolve(outputDirectory),
-      await makePhantomakeOptions(inputDirectory, { logging: true })
+      await makePhantomakeOptions(inputDirectory, { logging: true }),
     );
   });
 
@@ -161,7 +167,7 @@ program
             },
             (err) => {
               consola.error(err?.toString());
-            }
+            },
           )
           .finally(() => {
             makePromise = null;

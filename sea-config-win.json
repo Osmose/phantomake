@@ -1,0 +1,6 @@
+{
+  "main": "dist/phantomake.cjs",
+  "mainFormat": "commonjs",
+  "output": "phantomake.exe",
+  "disableExperimentalSEAWarning": true
+}

@@ -1,10 +1,10 @@
+import * as fs from 'node:fs/promises';
 import * as nodePath from 'node:path';
-import { BunFile } from 'bun';
 import { isText } from 'istextorbinary';
 import type { FrontMatterResult as GeneralFrontMatterResult } from 'front-matter';
-import { textFileProcessors } from './processing';
+import { textFileProcessors } from './processing.ts';
 import frontMatter from 'front-matter';
-import { FileContext } from './context';
+import { FileContext } from './context.ts';
 
 /** Front matter attributes that are used by phantomake's processing. */
 export interface FrontMatterAttributes {
@@ -31,16 +31,27 @@ export class InputFile {
   // Properties present on text files only
   public readonly processor: TextFileProcessor | null = null;
 
-  constructor(
-    public readonly path: string,
-    public readonly file: BunFile,
-    public readonly relativePath: string,
-    public readonly isText: boolean,
+  public readonly path: string;
+  public readonly relativePath: string;
+  public readonly isText: boolean;
 
-    // Provided only for text files
-    public body: string | null = null,
-    public attributes: FrontMatterAttributes = {}
+  // Provided only for text files
+  public body: string | null = null;
+  public attributes: FrontMatterAttributes = {};
+
+  constructor(
+    path: string,
+    relativePath: string,
+    isText: boolean,
+    body: string | null = null,
+    attributes: FrontMatterAttributes = {},
   ) {
+    this.path = path;
+    this.relativePath = relativePath;
+    this.isText = isText;
+    this.body = body;
+    this.attributes = attributes;
+
     this.parsedRelativePath = nodePath.parse(this.relativePath);
 
     if (this.isText) {
@@ -76,16 +87,16 @@ export class InputFile {
   static async fromPath(inputRoot: string, path: string) {
     const relativePath = nodePath.relative(inputRoot, path);
     const isTextFile = isText(path) ?? false;
-    const file = Bun.file(path);
 
     let body = null;
     let attributes: FrontMatterAttributes = {};
     if (isTextFile) {
-      const frontMatterResult = frontMatter<FrontMatterAttributes>(await file.text());
+      const fileText = await fs.readFile(path);
+      const frontMatterResult = frontMatter<FrontMatterAttributes>(fileText.toString('utf8'));
       body = frontMatterResult.body;
       attributes = frontMatterResult.attributes;
     }
 
-    return new InputFile(path, file, relativePath, isTextFile, body, attributes);
+    return new InputFile(path, relativePath, isTextFile, body, attributes);
   }
 }

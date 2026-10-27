@@ -1,8 +1,8 @@
 import * as nodePath from 'node:path';
 import ejs from 'ejs';
-import type { InputFile, TextFileProcessor } from './base';
-import { FileContext } from './context';
-import renderMarkdown from './markdown';
+import type { InputFile, TextFileProcessor } from './base.ts';
+import { FileContext } from './context.ts';
+import renderMarkdown from './markdown.ts';
 
 const MarkdownProcessor: TextFileProcessor = {
   defaultAttributes: {
@@ -44,7 +44,7 @@ const EJSProcessor: TextFileProcessor = {
     return ejs.render(
       inputFile.body,
       { ...args, ctx: context },
-      { filename: inputFile.path, includer: context._includer, root: context._inputDirectory }
+      { filename: inputFile.path, includer: context._includer, root: context._inputDirectory },
     );
   },
 };

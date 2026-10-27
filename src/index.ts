@@ -3,9 +3,9 @@ import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import ejs from 'ejs';
 import { consola } from 'consola';
-import { InputFile } from './base';
-import { FileContext, GlobalContext } from './context';
-import { walk } from './util';
+import { InputFile } from './base.ts';
+import { FileContext, GlobalContext } from './context.ts';
+import { walk } from './util.ts';
 
 interface Template {
   render: ejs.TemplateFunction;
@@ -13,14 +13,18 @@ interface Template {
 }
 
 class Templates {
-  constructor(private readonly templates: { [name: string]: Template }) {}
+  private readonly templates: { [name: string]: Template };
+
+  constructor(templates: { [name: string]: Template }) {
+    this.templates = templates;
+  }
 
   apply(templateName: string | null | undefined, data?: ejs.Data | undefined) {
     const template = this.templates[templateName ?? 'default'];
     if (!template) {
       if (!templateName || templateName === 'default') {
         throw new Error(
-          'Markdown files without an explicit template require a default HTML template at .templates/default.ejs'
+          'Markdown files without an explicit template require a default HTML template at .templates/default.ejs',
         );
       } else {
         throw new Error(`No template found under .templates named ${templateName}.`);
@@ -37,13 +41,13 @@ class Templates {
   static async fromInputFiles(globalContext: GlobalContext, inputFiles: InputFile[]) {
     const templates: { [name: string]: Template } = {};
     for (const inputFile of inputFiles) {
-      if (!inputFile.isTemplate) {
+      if (!inputFile.isTemplate || inputFile.body === null) {
         continue;
       }
 
       const context = globalContext.fileContext(inputFile);
       templates[inputFile.parsedRelativePath.name] = {
-        render: ejs.compile(await inputFile.file.text(), {
+        render: ejs.compile(inputFile.body, {
           filename: inputFile.path,
           includer: context._includer,
         }),
@@ -101,7 +105,7 @@ export interface PhantomakeOptions {
 export default async function phantomake(
   inputDirectory: string,
   outputDirectory: string,
-  options: PhantomakeOptions = {}
+  options: PhantomakeOptions = {},
 ) {
   const logger = options.logging ? consola : null;
 
@@ -157,14 +161,14 @@ export default async function phantomake(
       for (const output of outputs) {
         const fullOutputPath = nodePath.join(tempOutputDirectory, output.path);
         await fs.mkdir(nodePath.dirname(fullOutputPath), { recursive: true });
-        await Bun.write(fullOutputPath, output.content);
+        await fs.writeFile(fullOutputPath, output.content);
       }
     } else {
       // Non-text files are copied
       logger?.verbose(`${inputFile.relativePath} ──> ${inputFile.relativePath}`);
       const outputPath = nodePath.join(tempOutputDirectory, inputFile.relativePath);
       await fs.mkdir(nodePath.dirname(outputPath), { recursive: true });
-      await Bun.write(outputPath, inputFile.file);
+      await fs.copyFile(inputFile.path, outputPath);
     }
   }
 

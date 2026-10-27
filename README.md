@@ -14,7 +14,7 @@ Phantomake is a static site generator with specific goals:
 - Can reuse common code (headers/footers/common HTML) across several pages with templates and includes
 - Can do pagination (e.g. for blog listings)
 
-Phantomake is written in [TypeScript](https://www.typescriptlang.org/) and runs on [Bun](https://bun.sh/).
+Phantomake is written in [TypeScript](https://www.typescriptlang.org/) and runs on [Node](https://nodejs.org).
 
 ## Install
 
@@ -24,10 +24,10 @@ Binaries for MacOS, Linux, and Windows are available from the [Releases](https:/
 - [Linux](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-linux.tar.gz)
 - [Windows](https://github.com/Osmose/phantomake/releases/latest/download/phantomake-windows.zip)
 
-If you have [Bun](https://bun.sh/) installed, you can also install Phantomake as a global package:
+If you have [NPM](https://www.npmjs.com/ installed, you can also install Phantomake as a global package:
 
 ```sh
-bun add -g https://github.com/Osmose/phantomake/releases/latest/download/source.tar.gz
+npm install -g https://github.com/Osmose/phantomake/releases/latest/download/source.tar.gz
 ```
 
 ## Usage

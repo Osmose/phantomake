@@ -14,14 +14,14 @@ Phantomake does not currently have an update mechanism—you will need to redown
 
 Older versions of Phantomake can be downloaded from the [Releases](https://github.com/Osmose/phantomake/releases) page on Github.
 
-### Install via Bun
+### Install via NPM
 
-If you have [Bun](https://bun.sh/) installed, you can also install Phantomake as a global package:
+If you have [NPM](https://www.npmjs.com/) installed, you can also install Phantomake as a global package:
 
 ```sh
-bun add -g https://github.com/Osmose/phantomake/releases/latest/download/source.tar.gz
+npm install -g https://github.com/Osmose/phantomake/releases/latest/download/source.tar.gz
 ```
 
-This will add the `phantomake` command to your `PATH` and will run it on your local version of bun.
+This will add the `phantomake` command to your `PATH` and will run it on your local version of Node.
 
 You can update to the latest version of Phantomake by re-running the command above after a new version is released.
